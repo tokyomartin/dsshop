@@ -1,6 +1,5 @@
 <?php
 
-use Dspurl\DsshopInstaller\Providers\DsshopInstallerServiceProvider;
 
 return [
 
