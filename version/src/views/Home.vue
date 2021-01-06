@@ -2,7 +2,7 @@
   <div class="main">
     <el-image class="logo" :src="require('@/assets/logo.jpg')"/>
     <div class="title">DSHOP电商商城</div>
-    <div class="describe">傻瓜式一键安装，轻松实现DSSHOP的安装、更新</div>
+    <div class="describe">傻瓜式一键安装，轻松实现DSSHOP的安装</div>
     <div>
       <el-button class="sub" type="danger" round @click="goPath">开始安装</el-button>
     </div>

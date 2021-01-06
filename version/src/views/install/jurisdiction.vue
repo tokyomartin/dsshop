@@ -9,6 +9,7 @@
           <el-table
             :data="list"
             border
+            v-loading="listLoading"
             style="width: 100%">
             <el-table-column
               prop="catalogue"
@@ -26,7 +27,7 @@
               </template>
             </el-table-column>
           </el-table>
-          <el-button type="danger" class="sub">检查权限<i class="el-icon-arrow-right el-icon--right"/></el-button>
+          <el-button @click="goPath" type="danger" class="sub">项目配置<i class="el-icon-arrow-right el-icon--right"/></el-button>
         </div>
       </el-col>
     </el-row>
@@ -35,6 +36,8 @@
 
 <script>
 import Steps from "@/components/steps"
+import { jurisdiction } from '@/api/install'
+import { ElMessage } from 'element-plus'
 export default {
   name: 'Jurisdiction',
   components: {
@@ -43,29 +46,30 @@ export default {
   data() {
     return {
       place: 2,
-      list: [
-        {
-          catalogue: 'storage/framework/',
-          jurisdiction: 777,
-          state: true
-        },
-        {
-          catalogue: 'storage/logs/',
-          jurisdiction: 777,
-          state: true
-        },
-        {
-          catalogue: 'bootstrap/cache/',
-          jurisdiction: 777,
-          state: false
-        }
-      ]
+      listLoading: false,
+      list: []
     }
+  },
+  created() {
+    this.getList()
   },
   methods: {
     goPath() {
-      this.$router.push({ path:'/install'})
-    }
+      for (const element of this.list){
+        if (!element.state) {
+          ElMessage.error('您的目录权限不足，请先处理');
+          return false
+        }
+      }
+      this.$router.push({ path:'/install/configuration'})
+    },
+    getList() {
+      this.listLoading = true
+      jurisdiction().then(response => {
+        this.list = response.data
+        this.listLoading = false
+      })
+    },
   }
 }
 </script>

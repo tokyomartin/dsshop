@@ -20,6 +20,16 @@ const routes = [
         name: 'Jurisdiction',
         path: 'jurisdiction',
         component: import('../views/install/jurisdiction.vue')
+      },
+      {
+        name: 'Configuration',
+        path: 'configuration',
+        component: import('../views/install/configuration.vue')
+      },
+      {
+        name: 'Dispose',
+        path: 'dispose',
+        component: import('../views/install/dispose.vue')
       }
     ]
   }

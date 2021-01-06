@@ -168,7 +168,6 @@ return [
         /*
          * Package Service Providers...
          */
-        Dspurl\DsshopInstaller\Providers\DsshopInstallerServiceProvider::class,
 
         /*
          * Application Service Providers...

@@ -9,6 +9,7 @@
           <el-table
             :data="list"
             border
+            v-loading="listLoading"
             style="width: 100%">
             <el-table-column
               prop="server"
@@ -34,6 +35,8 @@
 
 <script>
 import Steps from "@/components/steps"
+import { server } from '@/api/install'
+import { ElMessage } from 'element-plus'
 export default {
   name: 'Server',
   components: {
@@ -42,29 +45,30 @@ export default {
   data() {
     return {
       place: 1,
-      list: [
-        {
-          server: 'php(version 7.0.0 required)',
-          value: '7.2.4',
-          state: true
-        },
-        {
-          server: 'Openssl',
-          value: '',
-          state: true
-        },
-        {
-          server: 'Pdo',
-          value: '',
-          state: false
-        }
-      ]
+      listLoading: false,
+      list: []
     }
+  },
+  created() {
+    this.getList()
   },
   methods: {
     goPath() {
+      for (const element of this.list){
+        if (!element.state) {
+          ElMessage.error('环境不符合安装条件，请先处理');
+          return false
+        }
+      }
       this.$router.push({ path:'/install/jurisdiction'})
-    }
+    },
+    getList() {
+      this.listLoading = true
+      server().then(response => {
+        this.list = response.data
+        this.listLoading = false
+      })
+    },
   }
 }
 </script>

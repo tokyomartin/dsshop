@@ -9,6 +9,9 @@
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+//安装
+Route::get('server', 'InstallController@server')-> name('install:server');  //服务器要求
+Route::get('jurisdiction', 'InstallController@jurisdiction')-> name('install:jurisdiction');  //权限检测
 //如果有版本控制的话，请复制以下代码，修改版本号;访问地址把v1换成设置的版本号即可
 Route::prefix('v1')->namespace('v1')->group(function () {
     // 后台API
