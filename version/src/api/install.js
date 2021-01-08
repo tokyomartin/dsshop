@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import Qs from 'qs'
 export function server() {
   return request({
     url: 'server',
@@ -13,3 +14,14 @@ export function jurisdiction() {
   })
 }
 
+export function configuration(data) {
+  data = Qs.parse({
+    data
+  })
+  data = data.data
+  return request({
+    url: 'configuration',
+    method: 'POST',
+    data
+  })
+}

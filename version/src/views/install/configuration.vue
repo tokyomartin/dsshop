@@ -233,6 +233,7 @@
 
 <script>
 import Steps from "@/components/steps"
+import { configuration } from '@/api/install'
 import { ElMessage } from 'element-plus'
 export default {
   name: 'Configuration',
@@ -456,7 +457,14 @@ export default {
     goPath() {
       this.$refs['ruleForm'].validate((valid) => {
         if (valid) {
-          this.$router.push({ path:'/install/dispose'})
+          configuration(this.ruleForm).then(response => {
+            if (response.data === 'ok') {
+              this.$router.push({ path:'/install/dispose'})
+            } else{
+              ElMessage.error('创建.env失败');
+            }
+          })
+          
         } else {
           ElMessage.error('存在错误信息，请处理');
           return false;

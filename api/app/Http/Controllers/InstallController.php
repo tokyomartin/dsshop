@@ -12,22 +12,22 @@ class InstallController extends Controller
     public function server(Request $request){
         $return=[
             [
-                'install'=>'php(version '.PHP_VERSION.' required)',
+                'server'=>'php(version '.PHP_VERSION.' required)',
                 'value'=>'7.2.5',
                 'state'=>PHP_VERSION >= '7.2.5' ? PHP_VERSION : false
             ],
             [
-                'install'=>'curl',
+                'server'=>'curl',
                 'value'=>'',
                 'state'=>extension_loaded('curl') ? true : false
             ],
             [
-                'install'=>'pdo',
+                'server'=>'pdo',
                 'value'=>'',
                 'state'=>extension_loaded('pdo') ? true : false
             ],
             [
-                'install'=>'openssl',
+                'server'=>'openssl',
                 'value'=>'',
                 'state'=>extension_loaded('openssl') ? true : false
             ],
@@ -37,7 +37,7 @@ class InstallController extends Controller
                 'state'=>extension_loaded('pcntl') ? true : false
             ],*/
             [
-                'install'=>'redis',
+                'server'=>'redis',
                 'value'=>'',
                 'state'=>extension_loaded('redis') ? true : false
             ],
@@ -69,6 +69,33 @@ class InstallController extends Controller
             ],
         ];
         return $return;
+    }
+
+    /**
+     * 项目配置
+     * @param Request $request
+     * @return string
+     */
+    public function configuration(Request $request){
+        $contents='';
+        $booleanArr=['app_debug','mail_switch','miniweixin_subscription_information_switch','wechat_mini_program_switch','wechat_official_account_switch','wechat_payment_sandbox','wechat_subscription_information_switch'];
+        foreach ($request->all() as $key=>$value){
+            if(in_array($key,$booleanArr)){
+                $contents.=strtoupper($key).'='.($value ? 'true' : 'false').PHP_EOL;
+            }else{
+                $contents.=strtoupper($key).'='.$value.PHP_EOL;
+            }
+        }
+        file_put_contents("../.env",$contents);
+        return 'ok';
+    }
+
+    /**
+     * 安装
+     * @param Request $request
+     */
+    public function dispose(Request $request){
+
     }
 
     private function getPermission($folder)

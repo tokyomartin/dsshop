@@ -8,31 +8,31 @@ if (process.env.NODE_ENV === "development") {
 	const domainName = 'http://dsshop.test'
 	configURL = {
 		// 腾讯地图的key，参考：https://lbs.qq.com/service/webService/webServiceGuide/webServiceGeocoder
-		lbsQq: '',
+		lbsQq: '4J2BZ-GKXHJ-OGFFL-FTOZ2-PQ3Q2-DUBVX',
 		DomainName: domainName,
 		BaseURL: domainName +INTERFACE,	//api_URL
-		secret: 'base64:'
+		secret: 'base64:AsXHg1OmJNQ7pJlfCktOKVAVrtqQwdK52Oz3xg7s72Q='
 	}
 	applyDsshopNodeEnv = 'dev'
 } else {
 	if (NODE_ENV === 'test') {
 		//测试环境
-		const domainName = 'http://dsshop.test'
+		const domainName = 'https://dsshop.dswjcms.com'
 		configURL = {
-			lbsQq: '',
+			lbsQq: '4J2BZ-GKXHJ-OGFFL-FTOZ2-PQ3Q2-DUBVX',
 			DomainName: domainName,
 			BaseURL: domainName +INTERFACE,
-			secret: 'base64:'
+			secret: 'base64:AsXHg1OmJNQ7pJlfCktOKVAVrtqQwdK52Oz3xg7s72Q='
 		}
 		applyDsshopNodeEnv = 'test'
 	}else{
 		//生产环境
-		const domainName = 'http://dsshop.test'
+		const domainName = 'https://dsshop.dswjcms.com'
 		configURL = {
-			lbsQq: '',
+			lbsQq: '4J2BZ-GKXHJ-OGFFL-FTOZ2-PQ3Q2-DUBVX',
 			DomainName: domainName,
 			BaseURL: domainName +INTERFACE,
-			secret: 'base64:'
+			secret: 'base64:AsXHg1OmJNQ7pJlfCktOKVAVrtqQwdK52Oz3xg7s72Q='
 		}
 		applyDsshopNodeEnv = 'prod'
 	}
