@@ -1,10 +1,10 @@
 <template>
   <div class="steps">
     <div class="icon">
-      <div class="steps-box"><div @click="goPath('/install/install')" class="circle" :class="{on:place>0}"> <i class="el-icon-upload"/></div></div>
-      <div class="steps-box"><div @click="goPath('/install/jurisdiction')" class="circle" :class="{on:place>1}"><i class="el-icon-key"/></div></div>
-      <div class="steps-box"><div @click="goPath('/install/configuration')" class="circle" :class="{on:place>2}"><i class="el-icon-setting"/></div></div>
-      <div class="steps-box"><div @click="goPath('/install/dispose')" class="circle" :class="{on:place>3}"><i class="el-icon-cpu"/></div></div>
+      <div class="steps-box"><div class="circle" :class="{on:place>0}"> <i class="el-icon-upload"/></div></div>
+      <div class="steps-box"><div class="circle" :class="{on:place>1}"><i class="el-icon-key"/></div></div>
+      <div class="steps-box"><div class="circle" :class="{on:place>2}"><i class="el-icon-setting"/></div></div>
+      <div class="steps-box"><div class="circle" :class="{on:place>3}"><i class="el-icon-cpu"/></div></div>
     </div>
   </div>
 </template>

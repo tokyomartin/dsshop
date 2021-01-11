@@ -1,9 +1,8 @@
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
 const service = axios.create({
-  // baseURL: window.location.protocol+"//"+window.location.host, // api 的 base_url
-  baseURL: 'http://dsshop.test/api/',
-  timeout: 5000 // request timeout
+  baseURL: process.env.NODE_ENV === 'development' ? 'http://dsshop.test/install/api/' : window.location.protocol+"//"+window.location.host+"/install/api/", // api 的 base_url
+  timeout: 500000 // request timeout
 })
 // request interceptor
 service.interceptors.request.use(

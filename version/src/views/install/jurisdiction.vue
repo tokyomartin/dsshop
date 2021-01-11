@@ -66,6 +66,10 @@ export default {
     getList() {
       this.listLoading = true
       jurisdiction().then(response => {
+        if(response.data.code){
+          ElMessage.error(response.data.msg);
+          return false
+        }
         this.list = response.data
         this.listLoading = false
       })

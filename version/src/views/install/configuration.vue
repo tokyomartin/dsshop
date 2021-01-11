@@ -28,7 +28,7 @@
             </el-form-item>
             <el-form-item label="项目地址" prop="app_url">
               <el-input v-model="ruleForm.app_url" placeholder="请输入项目地址"/>
-              <div class="tip">请区分http和https</div>
+              <div class="tip">请区分http和https，默认为当前网址</div>
             </el-form-item>
             <div class="min-title">Mysql数据库配置</div>
             <el-form-item label="数据库主机" prop="db_host">
@@ -246,6 +246,7 @@ export default {
       ruleForm: {
         app_name: 'dsshop',
         app_env: 'local',
+        app_key: '',
         app_debug: true,
         app_url: 'http://' + document.location.hostname,
         db_host: 'mysql',
@@ -257,6 +258,8 @@ export default {
         redis_port: '6379',
         redis_db: '',
         redis_password: '',
+        passport_client_id: '',
+        passport_client_secret: '',
         mail_switch: false,
         mail_driver: 'smtp',
         mail_host: 'smtp.exmail.qq.com',
@@ -457,6 +460,8 @@ export default {
     goPath() {
       this.$refs['ruleForm'].validate((valid) => {
         if (valid) {
+          // this.ruleForm.app_url
+          
           configuration(this.ruleForm).then(response => {
             if (response.data === 'ok') {
               this.$router.push({ path:'/install/dispose'})

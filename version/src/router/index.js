@@ -30,6 +30,11 @@ const routes = [
         name: 'Dispose',
         path: 'dispose',
         component: import('../views/install/dispose.vue')
+      },
+      {
+        name: 'Succeed',
+        path: 'succeed',
+        component: import('../views/install/succeed.vue')
       }
     ]
   }

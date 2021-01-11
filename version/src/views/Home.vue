@@ -1,7 +1,7 @@
 <template>
   <div class="main">
     <el-image class="logo" :src="require('@/assets/logo.jpg')"/>
-    <div class="title">DSHOP电商商城</div>
+    <div class="title">DSSHOP电商商城</div>
     <div class="describe">傻瓜式一键安装，轻松实现DSSHOP的安装</div>
     <div>
       <el-button class="sub" type="danger" round @click="goPath">开始安装</el-button>
@@ -13,6 +13,11 @@
 export default {
   name: 'Home',
   components: {},
+  data() {
+    return {
+      url: window.location.protocol + "//" + window.location.host,
+    }
+  },
   methods: {
     goPath() {
       this.$router.push({ path:'/install/server'})
@@ -39,5 +44,11 @@ export default {
   }
   .sub{
     width: 200px;
+  }
+  .link{
+    width: 120px;
+    margin-bottom: 10px;
+    margin-left:10px;
+    margin-right:10px;
   }
 </style>

@@ -4,7 +4,7 @@ import store from '@/store'
 import { getToken } from '@/utils/auth'
 // create an axios instance
 const service = axios.create({
-  baseURL: process.env.BASE_API, // api 的 base_url
+  baseURL: process.env.ENV_CONFIG === 'prod' ? window.location.protocol + '//' + window.location.host + '/api/v1/admin/' : process.env.BASE_API, // api 的 base_url
   timeout: 5000 // request timeout
 })
 // request interceptor
