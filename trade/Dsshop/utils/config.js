@@ -17,7 +17,7 @@ if (process.env.NODE_ENV === "development") {
 } else {
 	if (NODE_ENV === 'test') {
 		//测试环境
-		const domainName = 'https://dsshop.dswjcms.com'
+		const domainName = window.location.protocol + '//' + window.location.host
 		configURL = {
 			lbsQq: '4J2BZ-GKXHJ-OGFFL-FTOZ2-PQ3Q2-DUBVX',
 			DomainName: domainName,
@@ -27,7 +27,7 @@ if (process.env.NODE_ENV === "development") {
 		applyDsshopNodeEnv = 'test'
 	}else{
 		//生产环境
-		const domainName = 'https://dsshop.dswjcms.com'
+		const domainName = 'http://dsshop.test'
 		configURL = {
 			lbsQq: '4J2BZ-GKXHJ-OGFFL-FTOZ2-PQ3Q2-DUBVX',
 			DomainName: domainName,
