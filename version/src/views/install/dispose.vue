@@ -7,7 +7,8 @@
         <steps :place="place"></steps>
         <div class="details">
           <pre class="pre" ref="main">{{ pre }}<div v-if="installation" class="installation">安装中<div class="spinner"><div class="bounce1"></div><div class="bounce2"></div><div class="bounce3"></div></div></div></pre>
-          <el-button :disabled="nextStep" @click="goPath" type="danger" class="sub">下一步<i class="el-icon-arrow-right el-icon--right"/></el-button>
+          <el-button v-if="reinstallation" @click="getDispose(1)" type="danger" class="sub">重新安装</el-button>
+          <el-button v-else :disabled="nextStep" @click="goPath" type="danger" class="sub">下一步<i class="el-icon-arrow-right el-icon--right"/></el-button>
         </div>
       </el-col>
     </el-row>
@@ -25,6 +26,7 @@ export default {
   },
   data() {
     return {
+      reinstallation: false,
       place: 4,
       pre: '',
       installation: false,
@@ -37,10 +39,12 @@ export default {
   methods: {
     getDispose(step){
       this.installation = true
+      this.reinstallation = false
       dispose(step).then(response => {
         this.installation = false
         if (!response.data.code) {
           ElMessage.error(response.data.msgCode);
+          this.reinstallation = true
         }
         let div = this.$refs.main
         this.pre+= response.data.msg
@@ -48,6 +52,7 @@ export default {
         if (response.data.code) {
           if (response.data.step === 'end') {
             this.nextStep = false
+            this.reinstallation = false
           } else {
             this.getDispose(response.data.step)
           }
@@ -55,15 +60,8 @@ export default {
       })
     },
     goPath() {
-      this.$refs['ruleForm'].validate((valid) => {
-        if (valid) {
-          localStorage.setItem('install', true)
-          this.$router.push({ path:'/install/succeed'})
-        } else {
-          ElMessage.error('存在错误信息，请处理');
-          return false;
-        }
-      });
+      localStorage.setItem('install', true)
+      this.$router.push({ path:'/install/succeed'})
     }
   }
 }

@@ -256,7 +256,7 @@ export default {
         db_password: '',
         redis_host: 'redis',
         redis_port: '6379',
-        redis_db: '',
+        redis_db: 1,
         redis_password: '',
         passport_client_id: '',
         passport_client_secret: '',
