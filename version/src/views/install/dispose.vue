@@ -53,6 +53,7 @@ export default {
           if (response.data.step === 'end') {
             this.nextStep = false
             this.reinstallation = false
+            localStorage.setItem('install', 'ok')
           } else {
             this.getDispose(response.data.step)
           }
@@ -60,7 +61,6 @@ export default {
       })
     },
     goPath() {
-      localStorage.setItem('install', 'ok')
       this.$router.push({ path:'/install/succeed'})
     }
   }
