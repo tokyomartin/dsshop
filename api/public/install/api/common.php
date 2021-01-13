@@ -40,7 +40,8 @@ function getPermission($folder)
  * @return string|null
  */
 function sellCode($code){
-    $content='cd /var/www/dsoauth/api'.PHP_EOL;
+    $path=explode('/public/install/api',dirname(__FILE__));
+    $content='cd '.$path[0].PHP_EOL;
     $content.=$code;
     return shell_exec($content);
 }
