@@ -60,7 +60,7 @@ export default {
       })
     },
     goPath() {
-      localStorage.setItem('install', true)
+      localStorage.setItem('install', 'ok')
       this.$router.push({ path:'/install/succeed'})
     }
   }
@@ -143,7 +143,7 @@ export default {
         top:0;
         left: 40px;
       }
-  
+
       .spinner > div {
         width: 6px;
         height: 6px;
@@ -156,22 +156,22 @@ export default {
         -webkit-animation-fill-mode: both;
         animation-fill-mode: both;
       }
-  
+
       .spinner .bounce1 {
         -webkit-animation-delay: -0.32s;
         animation-delay: -0.32s;
       }
-  
+
       .spinner .bounce2 {
         -webkit-animation-delay: -0.16s;
         animation-delay: -0.16s;
       }
-  
+
       @-webkit-keyframes bouncedelay {
         0%, 80%, 100% { -webkit-transform: scale(0.0) }
         40% { -webkit-transform: scale(1.0) }
       }
-  
+
       @keyframes bouncedelay {
         0%, 80%, 100% {
           transform: scale(0.0);
