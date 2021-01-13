@@ -5,7 +5,7 @@
     <div class="describe">恭喜你，安装成功</div>
     <el-alert
       class="alert"
-      title="切忌删除api/public/install目录"
+      title="切记删除api/public/install目录"
       type="error"
       effect="dark"/>
     <div>
