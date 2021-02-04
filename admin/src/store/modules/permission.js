@@ -45,6 +45,16 @@ export const componentsMap = {
   StatisticsVisit: () => import('@/views/Statistics/visit'),
   StatisticsAgeAndSex: () => import('@/views/Statistics/user'),
   StatisticsPay: () => import('@/views/Statistics/pay'),
+  // 栏目文章_s
+  Column: () => import('@/views/ToolManagement/Article/Column/index'),
+  ColumnList: () => import('@/views/ToolManagement/Article/Column/list'),
+  ColumnCreate: () => import('@/views/ToolManagement/Article/Column/create'),
+  ColumnEdit: () => import('@/views/ToolManagement/Article/Column/edit'),
+  Article: () => import('@/views/ToolManagement/Article/Article/index'),
+  ArticleList: () => import('@/views/ToolManagement/Article/Article/list'),
+  ArticleCreate: () => import('@/views/ToolManagement/Article/Article/create'),
+  ArticleEdit: () => import('@/views/ToolManagement/Article/Article/edit'),
+  // 栏目文章_e
   // 插件列表
   // 插件
   PlugIn: () => import('@/views/Plugin/index'),

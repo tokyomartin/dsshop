@@ -155,6 +155,18 @@ Route::prefix('v1')->namespace('v1')->group(function () {
     Route::namespace('Plugin')->group(function () {
         // 插件后台
         Route::prefix('admin')->namespace('Admin')->middleware(['auth:api'])->group(function () {
+            //栏目文章_s
+            Route::get('column', 'ColumnController@list')->middleware(['permissions:ColumnList']);    //栏目列表
+            Route::get('column/{id}', 'ColumnController@detail')->middleware(['permissions:ColumnEdit']);    //栏目详情
+            Route::post('column', 'ColumnController@create')->middleware(['permissions:ColumnCreate']);    //栏目添加
+            Route::post('column/{id}', 'ColumnController@edit')->middleware(['permissions:ColumnEdit']);    //栏目修改
+            Route::post('column/destroy/{id}', 'ColumnController@destroy')->middleware(['permissions:ColumnDestroy']);    //栏目删除
+            Route::get('article', 'ArticleController@list')->middleware(['permissions:ArticleList']);    //文章列表
+            Route::get('article/{id}', 'ArticleController@detail')->middleware(['permissions:ArticleEdit']);    //文章详情
+            Route::post('article', 'ArticleController@create')->middleware(['permissions:ArticleCreate']);    //文章添加
+            Route::post('article/{id}', 'ArticleController@edit')->middleware(['permissions:ArticleEdit']);    //文章修改
+            Route::post('article/destroy/{id}', 'ArticleController@destroy')->middleware(['permissions:ArticleDestroy']);    //文章删除
+            //栏目文章_e
             //前台插件列表
         });
         // 插件前台
@@ -162,6 +174,14 @@ Route::prefix('v1')->namespace('v1')->group(function () {
             //APP验证插件列表
         });
         Route::prefix('app')->namespace('Client')->middleware(['appverify'])->group(function () {
+            //栏目文章_s
+            Route::get('column', 'ColumnController@list');    //栏目列表
+            Route::get('column/{id}', 'ColumnController@detail');    //栏目详情
+            Route::post('column/pv/{id}', 'ColumnController@pv');    //增加栏目访问量
+            Route::get('article/column/{id}', 'ArticleController@list');    //文章列表
+            Route::get('article/{id}', 'ArticleController@detail');    //文章详情
+            Route::post('article/pv/{id}', 'ArticleController@pv');    //增加文章访问量
+            //栏目文章_e
             //APP无需验证插件列表
         });
     });
