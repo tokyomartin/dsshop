@@ -31,8 +31,8 @@
 					<text class="num" v-else>0.00</text>
 					<text>余额</text>
 				</view>
-				<view class="tj-item">
-					<text class="num">0</text>
+				<view class="tj-item" @click="navTo('/pages/coupon/index?state=1')">
+					<text class="num">{{userCouponCount}}</text>
 					<text>优惠券</text>
 				</view>
 			</view>
@@ -82,6 +82,7 @@
 	import User from '../../api/user';
 	import GoodIndent from '../../api/goodIndent';
 	import Notification from '../../api/notification'
+	import Coupon from '../../api/coupon.js'
     import {  
         mapState 
     } from 'vuex';  
@@ -98,7 +99,8 @@
 				browseList: [],
 				user: {},
 				noticeNumber: null,
-				quantity: {}
+				quantity: {},
+				userCouponCount: 0
 			}
 		},
 		onLoad(){
@@ -110,6 +112,7 @@
 				this.browse()
 				this.noticeConut()
 				this.getQuantity()
+				this.getUserCouponCount()
 			} else {
 				this.browseList = []
 				this.user = {}
@@ -218,6 +221,13 @@
 				this.moving = false;
 				this.coverTransition = 'transform 0.3s cubic-bezier(.21,1.93,.53,.64)';
 				this.coverTransform = 'translateY(0px)';
+			},
+			// 可用优惠券数量
+			getUserCouponCount(){
+				const that = this
+				Coupon.count(function(res){
+					that.userCouponCount = res
+				})
 			}
         }  
     }  

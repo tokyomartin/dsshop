@@ -21,6 +21,7 @@
       </el-row>
       <el-row type="flex" style="line-height: 35px;font-size: 14px;">
         <el-col v-if="list.good_location" :span="14">收货地址：{{ list.good_location.location }} ({{ list.good_location.address }})</el-col>
+        <el-col v-if="list.coupon_money" :span="10">优惠金额：¥ {{ list.coupon_money | 1000 }}</el-col>
       </el-row>
     </el-card>
     <!-- 订单进度 -->

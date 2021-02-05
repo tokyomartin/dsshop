@@ -55,6 +55,10 @@ export const componentsMap = {
   ArticleCreate: () => import('@/views/ToolManagement/Article/Article/create'),
   ArticleEdit: () => import('@/views/ToolManagement/Article/Article/edit'),
   // 栏目文章_e
+  // 优惠券_s
+  Coupon: () => import('@/views/ToolManagement/Coupon/index'),
+  CouponList: () => import('@/views/ToolManagement/Coupon/list'),
+  // 优惠券_e
   // 插件列表
   // 插件
   PlugIn: () => import('@/views/Plugin/index'),

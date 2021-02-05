@@ -52,8 +52,13 @@
 					<text class="yticon icon-you"></text>
 				</view>
 			</block>
+			<view class="c-row b-b" @click="changeShow(true)">
+				<text class="tit">优惠券</text>
+				<text class="con t-r red"></text>
+				<text class="yticon icon-you"></text>
+			</view>
 		</view>
-
+		
 		<view class="detail-desc">
 			<view class="d-header"><text>图文详情</text></view>
 			<u-parse :content="getList.details" lazyLoad/>
@@ -88,6 +93,8 @@
 			<view class="mask"></view>
 			<view class="layer attr-content" @click.stop="stopPrevent"><sku :getList="getList" :buy="buy" @toggleSpec="toggleSpec" @purchasePattern="purchasePattern"></sku></view>
 		</view>
+		<!-- 优惠券-模态层弹窗  -->
+		<coupon :getList="couponList" :show="couponShow" @changeShow="changeShow"></coupon>
 		<!-- 已删除或还未发布-->
 		<view v-if="getList.is_delete || getList.is_show !== 1" class="sold-out padding-sm">商品已经下架了~</view>
 		<view v-if="inventoryFlag == false" class="sold-out padding-sm">商品已经售完了~</view>
@@ -102,6 +109,8 @@ import { param2Data } from '@/components/sku/sku2param';
 import sku from '@/components/sku';
 import Browse from '../../api/browse';
 import Collect from '../../api/collect';
+import coupon from '@/components/coupon'
+import CouponApi from '../../api/coupon'
 import {
 		mapState,
 		mapMutations
@@ -110,7 +119,8 @@ export default {
 	components: {
 		share,
 		sku,
-		uParse
+		uParse,
+		coupon
 	},
 	data() {
 		return {
@@ -130,7 +140,9 @@ export default {
 			resources_many: [],
 			video: '',
 			index: 0,
-			buy: false
+			buy: false,
+			couponList: [],
+			couponShow: false
 		};
 	},
 	async onLoad(options) {
@@ -138,6 +150,7 @@ export default {
 		if (id) {
 			this.id = id;
 			this.loadData(id);
+			this.getCoupon()
 		}
 	},
 	computed:{
@@ -201,7 +214,7 @@ export default {
 		//访问记录
 		browse() {
 			const getList = this.getList
-			Browse.create(getList)
+			Browse.create(getList, function(res) {})
 		},
 		// 图片预览
 		imgList() {
@@ -260,7 +273,37 @@ export default {
 		purchasePattern(data) {
 			this.specificationDefaultDisplay = data;
 		},
-		stopPrevent() {}
+		stopPrevent() {},
+		// 优惠券显示隐藏
+		changeShow(val){
+			if (!this.hasLogin){
+				this.$api.msg('请先登录')
+				return false
+			}
+			this.couponShow = val
+		},
+		// 获取优惠券列表
+		getCoupon(){
+			const that = this
+			CouponApi.getList({}, function(res) {
+				that.couponList = []
+				res.data.forEach(item=>{
+					let data = {
+						id: item.id,
+						money: item.cost/100,
+						title: item.explain,
+						type: item.type,
+						time: item.starttime.split(' ')[0].replace(/-/g,".") + "-" + item.endtime.split(' ')[0].replace(/-/g,"."),
+					}
+					if(item.limit_get && item.user_coupon_count >= item.limit_get){
+						data.state = "2"
+					} else{
+						data.state = "1"
+					}
+					that.couponList.push(data)
+				})
+			})
+		}
 	}
 };
 </script>

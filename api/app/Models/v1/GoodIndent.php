@@ -368,4 +368,11 @@ class GoodIndent extends Model
     public function PaymentLogAll(){
         return $this->morphMany('App\Models\v1\PaymentLog', 'pay');
     }
+
+    /**
+     * 订单优惠券
+     */
+    public function GoodIndentUserCoupon(){
+        return $this->hasOne(GoodIndentUserCoupon::class,'good_indent_id','id');
+    }
 }

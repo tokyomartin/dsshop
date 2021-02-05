@@ -35,6 +35,19 @@
 				</view>
 			</view>
 		</view>
+		<!-- 优惠明细 -->
+		<view class="yt-list" v-if="couponMoney">
+			<view class="yt-list-cell b-b" @click="toggleMask('show')">
+				<view class="cell-icon">
+					券
+				</view>
+				<text class="cell-tit clamp">优惠券</text>
+				<text class="cell-tip active">
+					{{couponList.length>0 ? couponList[couponIndex].title : '选择优惠券'}}
+				</text>
+				<text class="cell-more wanjia wanjia-gengduo-d"></text>
+			</view>
+		</view>
 		<!-- 金额明细 -->
 		<view class="yt-list">
 			<view class="yt-list-cell b-b">
@@ -77,21 +90,21 @@
 		<view class="mask" :class="maskState===0 ? 'none' : maskState===1 ? 'show' : ''" @click="toggleMask">
 			<view class="mask-content" @click.stop.prevent="stopPrevent">
 				<!-- 优惠券页面，仿mt -->
-				<view class="coupon-item" v-for="(item,index) in couponList" :key="index">
+				<view class="coupon-item" v-for="(item,index) in couponList" :key="index" :class="couponIndex === index ? 'on' : ''" @tap="toggleCoupon(index)">
 					<view class="con">
 						<view class="left">
 							<text class="title">{{item.title}}</text>
-							<text class="time">有效期至2019-06-30</text>
+							<text class="time">有效期至{{item.endTime}}</text>
 						</view>
 						<view class="right">
 							<text class="price">{{item.price}}</text>
-							<text>满30可用</text>
+							<text>{{item.sill}}</text>
 						</view>
 						
 						<view class="circle l"></view>
 						<view class="circle r"></view>
 					</view>
-					<text class="tips">限新用户使用</text>
+					<text class="tips">{{item.type}}</text>
 				</view>
 			</view>
 		</view>
@@ -102,6 +115,7 @@
 <script>
 	import Shipping from '../../api/shipping'
 	import GoodIndent from '../../api/goodIndent'
+	import Coupon from '../../api/coupon';
 	import {mapMutations} from 'vuex'
 	export default {
 		data() {
@@ -132,14 +146,19 @@
 					indentCommodity: [],
 					address: {},
 					remark: '',
-					carriage: 0
+					carriage: 0,
+					user_coupon_id: ''
 				},
-				order: []
+				order: [],
+				maskState: 0,
+				couponMoney: 0,
+				couponIndex: null
 			}
 		},
 		onLoad(option){
 			this.loginCheck()
 			this.loadData()
+			this.getCouponList()
 		},
 		methods: {
 			...mapMutations(['loginCheck']),
@@ -188,15 +207,6 @@
 					that.outPocketTotal() //实付金额
 				})
 			},
-			//显示优惠券面板
-			toggleMask(type){
-				let timer = type === 'show' ? 10 : 300;
-				let	state = type === 'show' ? 1 : 0;
-				this.maskState = 2;
-				setTimeout(()=>{
-					this.maskState = state;
-				}, timer)
-			},
 			numberChange(data) {
 				this.number = data.number;
 			},
@@ -210,6 +220,9 @@
 				}
 				this.data.address = this.addressData
 				this.data.carriage = this.carriage
+				if(this.couponList.length>0){
+					this.data.user_coupon_id = this.couponList[this.couponIndex].id
+				}
 				GoodIndent.create(this.data,function(res){
 					uni.removeStorageSync('dsshopOrderList')
 					uni.removeStorageSync('dsshopCartList')
@@ -240,10 +253,85 @@
 			//计算实付金额
 			outPocketTotal(){
 				let outPocket = 0
-				outPocket = outPocket + this.total + this.carriage
+				outPocket = outPocket + this.total + this.carriage  - this.couponMoney
 				this.outPocket = Number(outPocket.toFixed(2))
 			},
-			stopPrevent(){}
+			stopPrevent(){},
+			//获取可用的优惠券
+			getCouponList(money){
+				let that = this
+				let couponList = []
+				let couponMoney = 0 //默认优惠金额
+				let couponIndex = null //默认优惠券index
+				Coupon.getUserList({
+					money: money,
+					limit: 100
+				}, function(res) {
+					res.data.forEach((item,index)=>{
+						let data = {
+							id: item.id,
+							title: item.coupon.name,
+							explain: item.coupon.explain,
+							endTime: item.coupon.endtime.split(' ')[0].replace(/-/g,".")
+						}
+						
+						switch(item.coupon.type){
+							case 1:
+							data.type = '满减优惠券'
+							data.price = item.coupon.cost/100
+							if(data.price > couponMoney){
+								couponMoney = data.price
+								couponIndex = index
+							}
+							
+							break
+							case 2:
+							data.type = '随机优惠券'
+							data.price = item.coupon.cost/100
+							if(data.price > couponMoney){
+								couponMoney = data.price
+								couponIndex = index
+							}
+							
+							break
+							case 3:
+							data.type = '折扣优惠券'
+							data.price = that.total * item.coupon.cost/10000
+							if(data.price > couponMoney){
+								couponMoney = data.price
+								couponIndex = index
+							}
+							break
+						}
+						if(item.coupon.sill){
+							data.sill = '满' + (item.coupon.sill/100) + '可用'
+						}else{
+							data.sill = '无门槛'
+						}
+						couponList.push(data)
+					})
+					that.couponList = couponList
+					that.couponMoney = couponMoney
+					that.couponIndex = couponIndex
+					that.outPocketTotal()
+				})
+			},
+			//显示优惠券面板
+			toggleMask(type){
+				let timer = type === 'show' ? 10 : 300;
+				let	state = type === 'show' ? 1 : 0;
+				this.maskState = 2;
+				setTimeout(()=>{
+					this.maskState = state;
+				}, timer)
+			},
+			// 切换优惠券
+			toggleCoupon(index){
+				this.couponIndex = index
+				this.couponMoney = this.couponList[index].price
+				this.outPocketTotal()
+				this.toggleMask('hide')
+			},
 		}
 	}
 </script>

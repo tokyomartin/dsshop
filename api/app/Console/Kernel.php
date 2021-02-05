@@ -2,6 +2,8 @@
 
 namespace App\Console;
 
+use App\Console\Commands\CouponExpireDispose;
+use App\Console\Commands\CouponStartDispose;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -13,6 +15,8 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
+        CouponExpireDispose::class,
+        CouponStartDispose::class
     ];
 
     /**
@@ -36,6 +40,8 @@ class Kernel extends ConsoleKernel
                 $schedule->command('backup:run')->dailyAt(config('backup.time'));
             }
         }
+        $schedule->command('coupon:expire')->dailyAt('00:00')->withoutOverlapping(10);
+        $schedule->command('coupon:start')->dailyAt('00:00')->withoutOverlapping(10);
     }
 
     /**

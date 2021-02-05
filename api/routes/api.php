@@ -167,10 +167,22 @@ Route::prefix('v1')->namespace('v1')->group(function () {
             Route::post('article/{id}', 'ArticleController@edit')->middleware(['permissions:ArticleEdit']);    //文章修改
             Route::post('article/destroy/{id}', 'ArticleController@destroy')->middleware(['permissions:ArticleDestroy']);    //文章删除
             //栏目文章_e
+            //优惠券_s
+            Route::get('coupon', 'CouponController@list')->middleware(['permissions:CouponList']);    //优惠券列表
+            Route::post('coupon', 'CouponController@create')->middleware(['permissions:CouponCreate']);    //优惠券添加
+            Route::post('coupon/{id}', 'CouponController@edit')->middleware(['permissions:CouponEdit']);    //优惠券操作
+            Route::post('coupon/destroy/{id}', 'CouponController@destroy')->middleware(['permissions:CouponDestroy']);    //优惠券删除
+            //优惠券_e
             //前台插件列表
         });
         // 插件前台
         Route::prefix('app')->namespace('Client')->middleware(['appverify', 'auth:web'])->group(function () {
+            //优惠券_s
+            Route::get('coupon', 'CouponController@list');    //优惠券列表
+            Route::get('coupon/user/count', 'CouponController@count');    //我的优惠券数量
+            Route::get('coupon/user', 'CouponController@user');    //我的优惠券列表
+            Route::post('coupon', 'CouponController@create');    //领取优惠券
+            //优惠券_e
             //APP验证插件列表
         });
         Route::prefix('app')->namespace('Client')->middleware(['appverify'])->group(function () {
