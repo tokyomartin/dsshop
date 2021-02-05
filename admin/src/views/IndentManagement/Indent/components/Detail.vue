@@ -156,7 +156,7 @@
             <el-input v-else v-model="temp.odd" maxlength="255" clearable/>
           </el-form-item>
           <el-form-item v-if="list.state === 3">
-            <el-button v-if="temp.id" :loading="dhlLoading" type="primary" @click="setDhlUpdate">保存</el-button>
+            <el-button v-if="temp.id" :loading="shipmentLoading" type="primary" @click="setDhlUpdate">保存</el-button>
             <el-button v-else type="primary" @click="dhlUpdate">编辑</el-button>
           </el-form-item>
         </el-form>
@@ -178,7 +178,7 @@
       </el-row>
     </el-card>
     <div class="right" style="margin-top: 20px;">
-      <el-button v-if="(list.state !== 1 && !list.refund_money) || !list.state === 8" type="danger" @click="dialogFormVisible = true">退款</el-button>
+      <el-button v-if="(list.state !== 1 && !list.refund_money) || !list.state === 8" :loading="shipmentLoading" type="danger" @click="dialogFormVisible = true">退款</el-button>
       <el-button v-if="list.state === 2" :loading="shipmentLoading" type="primary" @click="shipmentSubmit()">发货</el-button>
     </div>
     <!--退款-->
@@ -202,7 +202,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">{{ $t('usuel.cancel') }}</el-button>
-        <el-button type="primary" @click="refundData()">{{ $t('usuel.confirm') }}</el-button>
+        <el-button :loading="shipmentLoading" type="primary" @click="refundData()">{{ $t('usuel.confirm') }}</el-button>
       </div>
     </el-dialog>
     <!-- 送货单-->
@@ -320,7 +320,7 @@
       line-height: 30px;
     }
     .operation{
-      position: fixed;
+      position: absolute;
       bottom: 0;
       right: 0;
       padding-right: 10px;
@@ -373,10 +373,8 @@ export default {
   data() {
     return {
       shipmentLoading: false,
-      refundLoading: false,
       name: process.env.SITE_NAME,
       dialogInvoiceVisible: false,
-      dhlLoading: false,
       queryLoading: false,
       order_progress: 0,
       logistics: false,
@@ -489,12 +487,12 @@ export default {
       })
     },
     refundData() { // 退款
-      this.refundLoading = true
+      this.shipmentLoading = true
       this.$refs['refundForm'].validate((valid) => {
         if (valid) {
           refund(this.list.id, this.refundTemp).then(() => {
             this.dialogFormVisible = false
-            this.refundLoading = false
+            this.shipmentLoading = false
             this.$notify({
               title: this.$t('hint.succeed'),
               message: '退款成功',
@@ -503,10 +501,10 @@ export default {
             })
             setTimeout(this.$router.back(-1), 2000)
           }).catch(() => {
-            this.refundLoading = false
+            this.shipmentLoading = false
           })
         } else {
-          this.refundLoading = false
+          this.shipmentLoading = false
         }
       })
     },
@@ -520,9 +518,9 @@ export default {
     },
     // 保存配送信息
     setDhlUpdate() {
-      this.dhlLoading = true
+      this.shipmentLoading = true
       dhl(this.temp).then(() => {
-        this.dhlLoading = false
+        this.shipmentLoading = false
         this.temp = {}
         this.$notify({
           title: this.$t('hint.succeed'),
@@ -530,6 +528,8 @@ export default {
           type: 'success',
           duration: 2000
         })
+      }).catch(() => {
+        this.shipmentLoading = false
       })
     },
     getSummaries(param) {
