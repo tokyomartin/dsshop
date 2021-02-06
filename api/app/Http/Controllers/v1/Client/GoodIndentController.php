@@ -256,7 +256,7 @@ class GoodIndentController extends Controller
     {
         $return = DB::transaction(function () use ($id) {
             $GoodIndent = GoodIndent::with(['goodsList'])->find($id);
-            $GoodIndent->state = GoodIndent::GOOD_INDENT_STATE_ACCOMPLISH;
+            $GoodIndent->state = GoodIndent::GOOD_INDENT_STATE_EVALUATE;
             $GoodIndent->confirm_time = Carbon::now()->toDateTimeString();
             $GoodIndent->save();
             $Common = (new Common)->orderConfirmReceipt([
@@ -278,7 +278,18 @@ class GoodIndentController extends Controller
                     'template' => 'admin_order_completion',   //通知模板标识
                 ]);
                 if ($AdminCommon['result'] == 'ok') {
-                    return array(1, '收货成功');
+                    $Common = (new Common)->orderEvaluate([
+                        'id' => $GoodIndent->id,  //订单ID
+                        'identification' => $GoodIndent->identification,  //订单号
+                        'confirm_time' => $GoodIndent->confirm_time,    //确认收货时间
+                        'template' => 'order_evaluate',   //通知模板标识
+                        'user_id' => $GoodIndent->User->id    //用户ID
+                    ]);
+                    if ($AdminCommon['result'] == 'ok') {
+                        return array(1, '收货成功');
+                    } else {
+                        return array($Common['msg'], Code::CODE_PARAMETER_WRONG);
+                    }
                 } else {
                     return array($AdminCommon['msg'], Code::CODE_PARAMETER_WRONG);
                 }
@@ -350,6 +361,7 @@ class GoodIndentController extends Controller
             'obligation' => 0, //待付款
             'waitdeliver' => 0, //待发货
             'waitforreceiving' => 0, //待收货
+            'remainEvaluated' => 0, //待评价
         ];
         if ($GoodIndent) {
             foreach ($GoodIndent as $indent) {
@@ -361,6 +373,8 @@ class GoodIndentController extends Controller
                         $return['waitdeliver'] += 1;
                     } else if ($indent->state == GoodIndent::GOOD_INDENT_STATE_TAKE) {
                         $return['waitforreceiving'] += 1;
+                    } else if ($indent->state == GoodIndent::GOOD_INDENT_STATE_EVALUATE) {
+                        $return['remainEvaluated'] += 1;
                     }
                 }
             }

@@ -59,6 +59,10 @@ export const componentsMap = {
   Coupon: () => import('@/views/ToolManagement/Coupon/index'),
   CouponList: () => import('@/views/ToolManagement/Coupon/list'),
   // 优惠券_e
+  // 评价_s
+  Comment: () => import('@/views/ToolManagement/Comment/index'),
+  CommentList: () => import('@/views/ToolManagement/Comment/list'),
+  // 评价_e
   // 插件列表
   // 插件
   PlugIn: () => import('@/views/Plugin/index'),

@@ -86,10 +86,11 @@
 			</view>
 		</view>
 		<!-- 底部 -->
-		<view v-if="indentList.state === 1 || indentList.state === 3" class="footer">
+		<view v-if="indentList.state === 1 || indentList.state === 3 || indentList.state === 4" class="footer">
 			<view class="price-content"></view>
 			<navigator v-if="indentList.state === 1" :url="'/pages/money/pay?id=' + indentList.id" hover-class="none" class="submit">立即支付</navigator>
 			<view v-else-if="indentList.state === 3" class="submit" @click="confirmReceipt(indentList)">确认收货</view>
+			<view v-else-if="indentList.state === 4" class="submit" @click="goScore(indentList)">立即评价</view>
 		</view>
 	</view>
 </template>
@@ -165,6 +166,17 @@ export default {
 			GoodIndent.receipt(item.id,function(res){
 				that.getList()
 			})
+		},
+		// 评价
+		goScore(item){
+			uni.navigateTo({
+				url: `/pages/order/score?id=${item.id}`
+			})
+		},
+		//评价成功后回调
+		refreshOderList(){
+			// 需要重新加载
+			this.getList()
 		},
 		stopPrevent() {}
 	}

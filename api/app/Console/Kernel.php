@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Console\Commands\AutomaticDelivery;
 use App\Console\Commands\CouponExpireDispose;
 use App\Console\Commands\CouponStartDispose;
 use Illuminate\Console\Scheduling\Schedule;
@@ -15,8 +16,9 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
+        CouponStartDispose::class,
         CouponExpireDispose::class,
-        CouponStartDispose::class
+        AutomaticDelivery::class
     ];
 
     /**
@@ -27,6 +29,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        $schedule->command('coupon:expire')->dailyAt('00:00')->withoutOverlapping(10);
+        $schedule->command('coupon:start')->dailyAt('00:00')->withoutOverlapping(10);
         if(config('backup.switch')){    //是否开启备份功能
             $schedule->command('backup:clean')->daily()->at(config('backup.clean_time'));
             if(config('backup.db_time') || config('backup.files_time')){   //设置了数据库备份时间或文件备份时间
@@ -40,8 +44,10 @@ class Kernel extends ConsoleKernel
                 $schedule->command('backup:run')->dailyAt(config('backup.time'));
             }
         }
-        $schedule->command('coupon:expire')->dailyAt('00:00')->withoutOverlapping(10);
-        $schedule->command('coupon:start')->dailyAt('00:00')->withoutOverlapping(10);
+
+        //以下任务调试可直接删除
+        //自动发货
+        $schedule->command('automatic:delivery')->everyMinute();
     }
 
     /**

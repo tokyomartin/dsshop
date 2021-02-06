@@ -129,7 +129,7 @@ Route::prefix('v1')->namespace('v1')->group(function () {
         Route::get('goodIndent', 'GoodIndentController@list');    //订单列表
         Route::post('goodIndent', 'GoodIndentController@create');    //订单添加
         Route::get('goodIndent/detail/{id}', 'GoodIndentController@detail');    //订单详情
-        Route::get('goodIndent/synchronizationInventory', 'GoodIndentController@synchronizationInventory');    //同步线上商品库存
+        Route::post('goodIndent/synchronizationInventory', 'GoodIndentController@synchronizationInventory');    //同步线上商品库存
         Route::get('goodIndent/pay/{id}', 'GoodIndentController@pay');    //支付订单详情
         Route::post('goodIndent/receipt/{id}', 'GoodIndentController@receipt');    //确认收货
         Route::post('goodIndent/cancel/{id}', 'GoodIndentController@cancel');    //取消订单
@@ -173,6 +173,12 @@ Route::prefix('v1')->namespace('v1')->group(function () {
             Route::post('coupon/{id}', 'CouponController@edit')->middleware(['permissions:CouponEdit']);    //优惠券操作
             Route::post('coupon/destroy/{id}', 'CouponController@destroy')->middleware(['permissions:CouponDestroy']);    //优惠券删除
             //优惠券_e
+            //评价_s
+            Route::get('comment', 'CommentController@list')->middleware(['permissions:CommentList']);    //评价列表
+            Route::post('comment', 'CommentController@create')->middleware(['permissions:CommentCreate']);    //评价回复
+            Route::post('comment/{state}', 'CommentController@edit')->middleware(['permissions:CommentEdit']);    //评价操作
+            Route::post('comment/destroy/{id}', 'CommentController@destroy')->middleware(['permissions:CommentDestroy']);    //评价删除
+            //评价_e
             //前台插件列表
         });
         // 插件前台
@@ -183,6 +189,10 @@ Route::prefix('v1')->namespace('v1')->group(function () {
             Route::get('coupon/user', 'CouponController@user');    //我的优惠券列表
             Route::post('coupon', 'CouponController@create');    //领取优惠券
             //优惠券_e
+            //评价_s
+            Route::get('comment/detail/{id}', 'CommentController@detail');    //获取需要评价的商品列表
+            Route::post('comment/{id}', 'CommentController@create');    //评价
+            //评价_e
             //APP验证插件列表
         });
         Route::prefix('app')->namespace('Client')->middleware(['appverify'])->group(function () {
@@ -194,6 +204,9 @@ Route::prefix('v1')->namespace('v1')->group(function () {
             Route::get('article/{id}', 'ArticleController@detail');    //文章详情
             Route::post('article/pv/{id}', 'ArticleController@pv');    //增加文章访问量
             //栏目文章_e
+            //评价_s
+            Route::get('comment/good', 'CommentController@good');    //获取商品评价列表
+            //评价_e
             //APP无需验证插件列表
         });
     });
