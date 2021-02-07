@@ -179,8 +179,8 @@ class ArticleController extends Controller
     {
         $return = DB::transaction(function () use ($id) {
             $Resource = Resource::where('image_type', 'App\Models\v1\Article')->where('image_id', $id)->first();
-            Resource::where('id', $Resource->id)->delete();
-            Article::where('id', $id)->delete();
+            Resource::destroy($Resource->id);
+            Article::destroy($id);
             imgPathDelete('article', $Resource->img);
             return 1;
         }, 5);

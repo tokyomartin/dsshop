@@ -63,6 +63,10 @@ export const componentsMap = {
   Comment: () => import('@/views/ToolManagement/Comment/index'),
   CommentList: () => import('@/views/ToolManagement/Comment/list'),
   // 评价_e
+  // 分销_s
+  Distribution: () => import('@/views/ToolManagement/Distribution/index'),
+  DistributionList: () => import('@/views/ToolManagement/Distribution/list'),
+  // 分销_e
   // 插件列表
   // 插件
   PlugIn: () => import('@/views/Plugin/index'),

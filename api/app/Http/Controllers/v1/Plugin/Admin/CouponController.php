@@ -124,7 +124,7 @@ class CouponController extends Controller
      */
     public function destroy($id, Request $request)
     {
-        Coupon::where('id', $id)->update(['is_delete' => Coupon::COUPON_DELETE_YES]);
+        Coupon::destroy($id);
         return resReturn(1, '删除成功');
     }
 }

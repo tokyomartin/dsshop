@@ -83,7 +83,8 @@
 				seconds: '', // 读秒
 				ruleForm: {
 					cellphone: '',
-					password: ''
+					password: '',
+					uuid: ''
 				},
 				nodes: [{
 					name: 'span',
@@ -142,6 +143,9 @@
 			// #ifndef  MP
 			this.TabCur = 1
 			// #endif
+			if(options.uuid){
+				this.ruleForm.uuid = options.uuid
+			}
 		},
 		onShow(){
 			// #ifdef MP

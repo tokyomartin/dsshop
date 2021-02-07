@@ -179,6 +179,12 @@ Route::prefix('v1')->namespace('v1')->group(function () {
             Route::post('comment/{state}', 'CommentController@edit')->middleware(['permissions:CommentEdit']);    //评价操作
             Route::post('comment/destroy/{id}', 'CommentController@destroy')->middleware(['permissions:CommentDestroy']);    //评价删除
             //评价_e
+            //分销_s
+            Route::get('distribution', 'DistributionController@list')->middleware(['permissions:DistributionList']);    //分销列表
+            Route::post('distribution', 'DistributionController@create')->middleware(['permissions:DistributionCreate']);    //分销添加
+            Route::post('distribution/{photo}', 'DistributionController@edit')->middleware(['permissions:DistributionEdit']);    //分销修改
+            Route::post('distribution/destroy/{photo}', 'DistributionController@destroy')->middleware(['permissions:DistributionDestroy']);    //分销删除
+            //分销_e
             //前台插件列表
         });
         // 插件前台
