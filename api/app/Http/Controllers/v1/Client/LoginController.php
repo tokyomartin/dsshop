@@ -63,14 +63,6 @@ class LoginController extends Controller
         }
         $user->updated_at = Carbon::now()->toDateTimeString();
         $user->save();
-        $input = $request->all();
-        $log = new UserLog();
-        $log->user_id = $user->id;
-        $log->path = $request->path();
-        $log->method = $request->method();
-        $log->ip = $request->ip();
-        $log->input = json_encode($input, JSON_UNESCAPED_UNICODE);
-        $log->save();   # 记录日志
         return resReturn(1, [
             'nickname' => $user->nickname,
             'cellphone' => $user->cellphone,
@@ -102,6 +94,8 @@ class LoginController extends Controller
             if (!$User) {
                 $return = DB::transaction(function () use ($request, $miniPhoneNumber, $openid) {
                     $password = substr(MD5(time()), 5, 6);  //随机生成密码
+                    $redis = new RedisService();
+                    $redis->setex('password.register.' . $miniPhoneNumber['purePhoneNumber'], 30, $password);
                     $user = new User();
                     $user->name = $miniPhoneNumber['purePhoneNumber'];
                     $user->cellphone = $miniPhoneNumber['purePhoneNumber'];
@@ -200,7 +194,7 @@ class LoginController extends Controller
                             'msg' => $Common['msg'],
                             'code' => Code::CODE_PARAMETER_WRONG
                         ];
-                    }
+                    }*/
                     return [
                         'state' => 1,
                         'data' => $user
@@ -227,14 +221,6 @@ class LoginController extends Controller
                         $User[strtolower($request->platform)] = $openid;
                     }
                     $User->save();
-                    $input = $request->all();
-                    $log = new UserLog();
-                    $log->user_id = $User->id;
-                    $log->path = $request->path();
-                    $log->method = $request->method();
-                    $log->ip = $request->ip();
-                    $log->input = json_encode($input, JSON_UNESCAPED_UNICODE);
-                    $log->save();   # 记录日志
                     return [
                         'state' => 1,
                         'data' => $User
@@ -263,14 +249,9 @@ class LoginController extends Controller
      */
     public function logout(Request $request)
     {
-        $input = $request->all();
-        $log = new UserLog();
-        $log->user_id = auth('web')->user()->id;
-        $log->path = $request->path();
-        $log->method = $request->method();
-        $log->ip = $request->ip();
-        $log->input = json_encode($input, JSON_UNESCAPED_UNICODE);
-        $log->save();   # 记录日志
+        $user = User::find(auth('web')->user()->id);
+        $user->updated_at = Carbon::now()->toDateTimeString();
+        $user->save();
         return resReturn(1, '退出成功');
     }
 
