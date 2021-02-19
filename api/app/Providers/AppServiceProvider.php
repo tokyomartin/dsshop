@@ -10,9 +10,11 @@ use App\Observers\GoodIndent\EscrowRefundObserver;
 use App\Observers\GoodIndent\FinishPaymentMoneyLogObserver;
 use App\Observers\GoodIndent\FinishPaymentNotificationObserver;
 use App\Observers\GoodIndent\IndentCancelStockProcessingObserver;
+use App\Observers\GoodIndent\IndentCancelUserCouponReturnObserver;
 use App\Observers\GoodIndent\ReceiptNotificationObserver;
 use App\Observers\GoodIndent\RefundNotificationObserver;
 use App\Observers\GoodIndent\ShipmentNotificationObserver;
+use App\Observers\GoodIndent\UserUseCouponObserver;
 use App\Observers\User\UserLogObserver;
 use App\Observers\User\UserRegisterNotificationObserver;
 use Illuminate\Support\ServiceProvider;
@@ -51,6 +53,7 @@ class AppServiceProvider extends ServiceProvider
         GoodIndent::observe(RefundNotificationObserver::class);
         GoodIndent::observe(EscrowRefundObserver::class);
         // 插件
-
+        GoodIndent::observe(UserUseCouponObserver::class);
+        GoodIndent::observe(IndentCancelUserCouponReturnObserver::class);
     }
 }

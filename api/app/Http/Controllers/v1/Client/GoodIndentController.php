@@ -5,16 +5,12 @@ namespace App\Http\Controllers\v1\Client;
 use App\Code;
 use App\common\RedisService;
 use App\Http\Requests\v1\SubmitGoodIndentRequest;
-use App\Models\v1\Coupon;
 use App\Models\v1\Good;
-use App\Models\v1\GoodIndentUserCoupon;
-use App\Models\v1\GoodLocation;
 use App\Models\v1\User;
 use App\common\RedisLock;
 use App\Models\v1\GoodIndent;
 use App\Models\v1\GoodIndentCommodity;
 use App\Models\v1\GoodSku;
-use App\Models\v1\UserCoupon;
 use App\Notifications\Common;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -103,54 +99,9 @@ class GoodIndentController extends Controller
                     $total += $indentCommodity['number'] * $indentCommodity['price'];
                 }
                 $GoodIndent->identification = orderNumber();
-                $couponMoney = 0;
-                if ($request->user_coupon_id) {   //使用了优惠券
-                    $UserCoupon = UserCoupon::with(['Coupon'])->find($request->user_coupon_id);
-                    if ($UserCoupon) {
-                        switch ($UserCoupon->Coupon->type) {
-                            case Coupon::COUPON_TYPE_FULL_REDUCTION:
-                            case Coupon::COUPON_TYPE_RANDOM:
-                                $couponMoney = $UserCoupon->Coupon->cost / 100;
-                                break;
-                            case Coupon::COUPON_TYPE_DISCOUNT:  //折扣：商品总额*优惠券折扣/100
-                                $couponMoney = $total * ($UserCoupon->Coupon->cost / 10000);
-                                break;
-                        }
-                        $UserCoupon->state = UserCoupon::USER_COUPON_STATE_USED;
-                        $UserCoupon->save();
-                    }
-                    $GoodIndent->coupon_money = $couponMoney;
-                }
-                $GoodIndent->total = $total + $request->carriage - $couponMoney;
+                $GoodIndent->total = $total + $request->carriage;
                 $GoodIndent->remark = $request->remark;
                 $GoodIndent->save();
-                if ($request->user_coupon_id) {
-                    $GoodIndentUserCoupon = new GoodIndentUserCoupon();
-                    $GoodIndentUserCoupon->good_indent_id = $GoodIndent->id;
-                    $GoodIndentUserCoupon->user_coupon_id = $request->user_coupon_id;
-                    $GoodIndentUserCoupon->save();
-                }
-                foreach ($request->indentCommodity as $id => $indentCommodity) {
-                    $GoodIndentCommodity = new GoodIndentCommodity();
-                    $GoodIndentCommodity->good_indent_id = $GoodIndent->id;
-                    $GoodIndentCommodity->good_id = $indentCommodity['good_id'];
-                    $GoodIndentCommodity->good_sku_id = $indentCommodity['good_sku_id'];
-                    $GoodIndentCommodity->img = $indentCommodity['img'];
-                    $GoodIndentCommodity->name = $indentCommodity['name'];
-                    $GoodIndentCommodity->price = $indentCommodity['price'];
-                    $GoodIndentCommodity->number = $indentCommodity['number'];
-                    $GoodIndentCommodity->save();
-                }
-                $GoodLocation = new GoodLocation();
-                $GoodLocation->good_indent_id = $GoodIndent->id;
-                $GoodLocation->cellphone = $request->address['cellphone'];
-                $GoodLocation->name = $request->address['name'];
-                $GoodLocation->location = $request->address['location'];
-                $GoodLocation->address = $request->address['address'];
-                $GoodLocation->latitude = $request->address['latitude'];
-                $GoodLocation->longitude = $request->address['longitude'];
-                $GoodLocation->house = $request->address['house'];
-                $GoodLocation->save();
                 return array(1, $GoodIndent->id);
             }, 5);
             RedisLock::unlock($redis, 'goodIndent');
@@ -312,27 +263,9 @@ class GoodIndentController extends Controller
      */
     public function cancel($id)
     {
-        $GoodIndent = GoodIndent::with(['GoodIndentUserCoupon', 'goodsList'])->find($id);
+        $GoodIndent = GoodIndent::with(['goodsList'])->find($id);
         $GoodIndent->state = GoodIndent::GOOD_INDENT_STATE_CANCEL;
         $GoodIndent->save();
-        //库存处理
-        foreach ($GoodIndent->goodsList as $indentCommodity) {
-            $Good = Good::select('id', 'is_inventory', 'inventory')->find($indentCommodity['good_id']);
-            if ($Good && $Good->is_inventory == Good::GOOD_IS_INVENTORY_NO) { //拍下减库存
-                if (!$indentCommodity['good_sku_id']) { //非SKU商品
-                    $Good->inventory = $Good->inventory + $indentCommodity['number'];
-                    $Good->save();
-                } else {
-                    $GoodSku = GoodSku::find($indentCommodity['good_sku_id']);
-                    $GoodSku->inventory = $GoodSku->inventory + $indentCommodity['number'];
-                    $GoodSku->save();
-                }
-            }
-        }
-        // 优惠券退还
-        if ($GoodIndent->GoodIndentUserCoupon) {
-            UserCoupon::where('id', $GoodIndent->GoodIndentUserCoupon->user_coupon_id)->update(['state' => UserCoupon::USER_COUPON_STATE_UNUSED]);
-        }
         return resReturn(1, '成功');
     }
 

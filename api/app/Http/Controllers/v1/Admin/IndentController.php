@@ -9,8 +9,6 @@ use App\Models\v1\GoodIndentCommodity;
 use App\Models\v1\MiniProgram;
 use App\Models\v1\PaymentLog;
 use App\Models\v1\User;
-use App\Models\v1\UserCoupon;
-use App\Notifications\Common;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
@@ -192,13 +190,9 @@ class IndentController extends Controller
         $lock = RedisLock::lock($redis, 'goodRefund');
         if ($lock) {
             $return = DB::transaction(function () use ($request, $id) {
-                $GoodIndent = GoodIndent::with(['GoodIndentUserCoupon', 'PaymentLog' => function ($q) {
+                $GoodIndent = GoodIndent::with(['PaymentLog' => function ($q) {
                     $q->where('state', PaymentLog::PAYMENT_LOG_STATE_COMPLETE)->where('type', PaymentLog::PAYMENT_LOG_TYPE_GOODS_INDENT);
                 }])->find($id);
-                //优惠券退还
-                if ($GoodIndent->GoodIndentUserCoupon) {
-                    UserCoupon::where('id', $GoodIndent->GoodIndentUser->user_coupon_id)->update(['state' => UserCoupon::USER_COUPON_STATE_UNUSED]);
-                }
                 if ($request->refund_way == GoodIndent::GOOD_INDENT_REFUND_WAY_BALANCE) {
                     $GoodIndent->refund_money = $request->refund_money;
                     $GoodIndent->refund_way = $request->refund_way;
