@@ -430,6 +430,7 @@ export default {
               this.order_progress = 3
               break
             case 5:
+            case 10:
               this.order_progress = 4
               break
           }

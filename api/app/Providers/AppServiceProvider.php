@@ -47,8 +47,12 @@ class AppServiceProvider extends ServiceProvider
         GoodIndent::observe(EscrowRefundObserver::class);
         // 插件
         // 优惠券_s
-        GoodIndent::observe(\App\Observers\GoodIndent\UserUseCouponObserver::class);
-        GoodIndent::observe(\App\Observers\GoodIndent\IndentCancelUserCouponReturnObserver::class);
+        \App\Models\v1\GoodIndent::observe(\App\Observers\GoodIndent\UserUseCouponObserver::class);
+        \App\Models\v1\GoodIndent::observe(\App\Observers\GoodIndent\IndentCancelUserCouponReturnObserver::class);
         // 优惠券_e
+        // 评价_s
+        \App\Models\v1\GoodIndent::observe(\App\Observers\GoodIndent\OrderRateNotificationObserver::class);
+        \App\Models\v1\Comment::observe(\App\Observers\Comment\UserEvaluateNotificationObserver::class);
+        // 评价_e
     }
 }
