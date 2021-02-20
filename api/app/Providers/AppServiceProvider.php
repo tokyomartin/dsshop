@@ -54,5 +54,8 @@ class AppServiceProvider extends ServiceProvider
         \App\Models\v1\GoodIndent::observe(\App\Observers\GoodIndent\OrderRateNotificationObserver::class);
         \App\Models\v1\Comment::observe(\App\Observers\Comment\UserEvaluateNotificationObserver::class);
         // 评价_e
+        // 分销_s
+        \App\Models\v1\User::observe(\App\Observers\User\RegistrationIncentivesObserver::class);
+        // 分销_e
     }
 }
