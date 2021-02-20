@@ -2,14 +2,12 @@
 /**
  * 微信公众号模板消息
  */
-
 namespace App\Channels;
 
 use App\Models\v1\NotificationLog;
 use Carbon\Carbon;
 use EasyWeChat\Factory;
 use Illuminate\Notifications\Notification;
-
 class WechatChannel
 {
     private $config;
@@ -44,7 +42,6 @@ class WechatChannel
             }
         }
     }
-
     /**
      *  发货通知
      * @param $notifiable
@@ -86,7 +83,6 @@ class WechatChannel
         $NotificationLog->state = $send['errcode'] == 0 ? NotificationLog::NOTIFICATION_LOG_STATE_OK : NotificationLog::NOTIFICATION_LOG_STATE_ERROR;
         $NotificationLog->save();
     }
-
     /**
      *  订单支付成功
      * @param $notifiable
@@ -128,7 +124,6 @@ class WechatChannel
         $NotificationLog->state = $send['errcode'] == 0 ? NotificationLog::NOTIFICATION_LOG_STATE_OK : NotificationLog::NOTIFICATION_LOG_STATE_ERROR;
         $NotificationLog->save();
     }
-
     /**
      * 订单待发货提醒
      * @param $notifiable
@@ -162,7 +157,6 @@ class WechatChannel
         $NotificationLog->state = $send['errcode'] == 0 ? NotificationLog::NOTIFICATION_LOG_STATE_OK : NotificationLog::NOTIFICATION_LOG_STATE_ERROR;
         $NotificationLog->save();
     }
-
     /**
      *  订单确认收货通知
      * @param $notifiable
@@ -204,7 +198,6 @@ class WechatChannel
         $NotificationLog->state = $send['errcode'] == 0 ? NotificationLog::NOTIFICATION_LOG_STATE_OK : NotificationLog::NOTIFICATION_LOG_STATE_ERROR;
         $NotificationLog->save();
     }
-
     /**
      * 订单完成通知
      * @param $notifiable
@@ -237,7 +230,6 @@ class WechatChannel
         $NotificationLog->state = $send['errcode'] == 0 ? NotificationLog::NOTIFICATION_LOG_STATE_OK : NotificationLog::NOTIFICATION_LOG_STATE_ERROR;
         $NotificationLog->save();
     }
-
     /**
      *  退款成功通知
      * @param $notifiable
@@ -276,7 +268,6 @@ class WechatChannel
         $NotificationLog->state = $send['errcode'] == 0 ? NotificationLog::NOTIFICATION_LOG_STATE_OK : NotificationLog::NOTIFICATION_LOG_STATE_ERROR;
         $NotificationLog->save();
     }
-
     /**
      *  注册成功通知
      * @param $notifiable
