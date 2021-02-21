@@ -11,18 +11,6 @@
 					<text class="username">{{user.nickname || user.cellphone || '游客'}}</text>
 				</view>
 			</view>
-			<!-- <view class="vip-card-box">
-				<image class="card-bg" src="/static/vip-card-bg.png" mode=""></image>
-				<view class="b-btn">
-					立即开通
-				</view>
-				<view class="tit">
-					<text class="yticon icon-iLinkapp-"></text>
-					VIP
-				</view>
-				<text class="e-m">VIP</text>
-				<text class="e-b">未开发</text>
-			</view> -->
 		</view>
 		
 		<view 
@@ -43,8 +31,8 @@
 					<text class="num" v-else>0.00</text>
 					<text>余额</text>
 				</view>
-				<view class="tj-item">
-					<text class="num">0</text>
+				<view class="tj-item" @click="navTo('/pages/coupon/index?state=1')">
+					<text class="num">{{userCouponCount}}</text>
 					<text>优惠券</text>
 				</view>
 			</view>
@@ -66,10 +54,10 @@
 					<text class="yticon icon-yishouhuo"><text v-if="quantity.waitforreceiving" class="cu-tag badge">{{quantity.waitforreceiving}}</text></text>
 					<text>待收货</text>
 				</view>
-				<!-- <view class="order-item" @click="navTo('/pages/order/order?state=7')" hover-class="common-hover"  :hover-stay-time="50">
-					<text class="yticon icon-shouhoutuikuan"></text>
-					<text>退款/售后</text>
-				</view> -->
+				<view class="order-item" @click="navTo('/pages/order/order?state=4')" hover-class="common-hover"  :hover-stay-time="50">
+					<text class="yticon icon-yishouhuo"><text v-if="quantity.remainEvaluated" class="cu-tag badge">{{quantity.remainEvaluated}}</text></text>
+					<text>待评价</text>
+				</view>
 			</view>
 			<!-- 浏览历史 -->
 			<view class="history-section icon">
@@ -82,9 +70,10 @@
 				</scroll-view>
 				<list-cell icon="icon-iconfontweixin" iconColor="#e07472" title="账单" @eventClick="navTo('/pages/finance/bill')"></list-cell>
 				<list-cell icon="icon-dizhi" iconColor="#5fcda2" title="地址管理" @eventClick="navTo('/pages/address/address')"></list-cell>
-				<!-- <list-cell icon="icon-share" iconColor="#9789f7" title="分享" tips="邀请好友赢10万大礼"></list-cell> -->
+				<list-cell icon="icon-share" iconColor="#9789f7" @eventClick="navTo('/pages/user/share')" title="分享" tips="邀请好友赢10元奖励"></list-cell>
 				<list-cell icon="icon-shoucang_xuanzhongzhuangtai" iconColor="#54b4ef" @eventClick="navTo('/pages/user/collect')" title="我的收藏"></list-cell>
 				<list-cell icon="icon-comment" iconColor="#e07472" title="通知" :tips="noticeNumber ? noticeNumber : null" @eventClick="navTo('/pages/notice/notice')"></list-cell>
+				<list-cell icon="icon-xiaoxi" iconColor="#9789f7" title="帮助中心" @eventClick="navToNoValidation('/pages/article/column')"></list-cell>
 				<list-cell icon="icon-shezhi1" iconColor="#e07472" title="设置" @eventClick="navTo('/pages/set/set')"></list-cell>
 			</view>
 		</view>
@@ -96,8 +85,9 @@
 	import listCell from '@/components/mix-list-cell';
 	import Browse from '../../api/browse';
 	import User from '../../api/user';
-	import Indents from '../../api/indents';
+	import GoodIndent from '../../api/goodIndent';
 	import Notification from '../../api/notification'
+	import Coupon from '../../api/coupon.js'
     import {  
         mapState 
     } from 'vuex';  
@@ -114,7 +104,13 @@
 				browseList: [],
 				user: {},
 				noticeNumber: null,
-				quantity: {}
+				quantity: {
+					all: 0,
+					obligation: 0,
+					waitdeliver: 0,
+					waitforreceiving: 0
+				},
+				userCouponCount: 0
 			}
 		},
 		onLoad(){
@@ -126,10 +122,17 @@
 				this.browse()
 				this.noticeConut()
 				this.getQuantity()
+				this.getUserCouponCount()
 			} else {
 				this.browseList = []
 				this.user = {}
 				this.noticeNumber = null
+				this.quantity = {
+					all: 0,
+					obligation: 0,
+					waitdeliver: 0,
+					waitforreceiving: 0
+				}
 			}
 			
 		},
@@ -159,28 +162,28 @@
         methods: {
 			getUser(){
 				const that = this
-				User.user(function(res){
+				User.detail(function(res){
 					that.user = res
 				})
 			},
 			browse(){
 				const that = this
 				Browse.getList({
-					limit: 10
+					limit: 10,
+					sort: '-updated_at'
 				},function(res){
 					that.browseList = res.data
 				})
 			},
 			noticeConut(){
 				const that = this
-				Notification.getCount({},function(res){
+				Notification.unread({},function(res){
 					that.noticeNumber = res ? res.toString() : null
 				})
 			},
 			getQuantity(){
 				const that = this
-				Indents.getQuantity(function(res){
-					console.log('getQuantity',res)
+				GoodIndent.quantity(function(res){
 					that.quantity = res
 				})
 			},
@@ -235,6 +238,13 @@
 				this.moving = false;
 				this.coverTransition = 'transform 0.3s cubic-bezier(.21,1.93,.53,.64)';
 				this.coverTransform = 'translateY(0px)';
+			},
+			// 可用优惠券数量
+			getUserCouponCount(){
+				const that = this
+				Coupon.count(function(res){
+					that.userCouponCount = res
+				})
 			}
         }  
     }  

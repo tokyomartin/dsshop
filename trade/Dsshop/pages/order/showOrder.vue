@@ -59,6 +59,10 @@
 				<text class="cell-tit clamp">商品金额</text>
 				<text class="cell-tip">￥{{ total | 1000 }}</text>
 			</view>
+			<view class="yt-list-cell b-b" v-if="indentList.coupon_money>0">
+				<text class="cell-tit clamp">优惠金额</text>
+				<text class="cell-tip red">-￥{{indentList.coupon_money}}</text>
+			</view>
 			<view class="yt-list-cell b-b">
 				<text class="cell-tit clamp">运费</text>
 				<text class="cell-tip">
@@ -82,16 +86,17 @@
 			</view>
 		</view>
 		<!-- 底部 -->
-		<view v-if="indentList.state === 1 || indentList.state === 3" class="footer">
+		<view v-if="indentList.state === 1 || indentList.state === 3 || indentList.state === 4" class="footer">
 			<view class="price-content"></view>
 			<navigator v-if="indentList.state === 1" :url="'/pages/money/pay?id=' + indentList.id" hover-class="none" class="submit">立即支付</navigator>
 			<view v-else-if="indentList.state === 3" class="submit" @click="confirmReceipt(indentList)">确认收货</view>
+			<view v-else-if="indentList.state === 4" class="submit" @click="goScore(indentList)">立即评价</view>
 		</view>
 	</view>
 </template>
 
 <script>
-import Indents from '../../api/indents';
+import GoodIndent from '../../api/goodIndent';
 import {mapMutations} from 'vuex'
 export default {
 	data() {
@@ -108,12 +113,14 @@ export default {
 		};
 	},
 	onLoad(option) {
-		this.loginCheck()
 		if (!option.id) {
 			this.$api.msg('参数有误');
 			return false;
 		}
 		this.id = option.id;
+	},
+	onShow(){
+		this.loginCheck()
 		//商品数据
 		this.getList();
 	},
@@ -122,7 +129,7 @@ export default {
 		async getList() {
 			let list = {};
 			const that = this;
-			await Indents.getDetails(this.id, function(res) {
+			await GoodIndent.detail(this.id, function(res) {
 				for (var k in res.goods_list) {
 					if (res.goods_list[k].good_sku) {
 						res.goods_list[k].good_sku.product_sku.forEach(item => {
@@ -156,9 +163,20 @@ export default {
 	    },
 		confirmReceipt(item){
 			const that = this
-			Indents.getReceipt(item.id,function(res){
+			GoodIndent.receipt(item.id,function(res){
 				that.getList()
 			})
+		},
+		// 评价
+		goScore(item){
+			uni.navigateTo({
+				url: `/pages/order/score?id=${item.id}`
+			})
+		},
+		//评价成功后回调
+		refreshOderList(){
+			// 需要重新加载
+			this.getList()
 		},
 		stopPrevent() {}
 	}
@@ -468,119 +486,6 @@ page {
 		color: #fff;
 		font-size: 32upx;
 		background-color: $base-color;
-	}
-}
-
-/* 优惠券面板 */
-.mask {
-	display: flex;
-	align-items: flex-end;
-	position: fixed;
-	left: 0;
-	top: var(--window-top);
-	bottom: 0;
-	width: 100%;
-	background: rgba(0, 0, 0, 0);
-	z-index: 9995;
-	transition: 0.3s;
-
-	.mask-content {
-		width: 100%;
-		min-height: 30vh;
-		max-height: 70vh;
-		background: #f3f3f3;
-		transform: translateY(100%);
-		transition: 0.3s;
-		overflow-y: scroll;
-	}
-	&.none {
-		display: none;
-	}
-	&.show {
-		background: rgba(0, 0, 0, 0.4);
-
-		.mask-content {
-			transform: translateY(0);
-		}
-	}
-}
-
-/* 优惠券列表 */
-.coupon-item {
-	display: flex;
-	flex-direction: column;
-	margin: 20upx 24upx;
-	background: #fff;
-	.con {
-		display: flex;
-		align-items: center;
-		position: relative;
-		height: 120upx;
-		padding: 0 30upx;
-		&:after {
-			position: absolute;
-			left: 0;
-			bottom: 0;
-			content: '';
-			width: 100%;
-			height: 0;
-			border-bottom: 1px dashed #f3f3f3;
-			transform: scaleY(50%);
-		}
-	}
-	.left {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		flex: 1;
-		overflow: hidden;
-		height: 100upx;
-	}
-	.title {
-		font-size: 32upx;
-		color: $font-color-dark;
-		margin-bottom: 10upx;
-	}
-	.time {
-		font-size: 24upx;
-		color: $font-color-light;
-	}
-	.right {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		font-size: 26upx;
-		color: $font-color-base;
-		height: 100upx;
-	}
-	.price {
-		font-size: 44upx;
-		color: $base-color;
-		&:before {
-			content: '￥';
-			font-size: 34upx;
-		}
-	}
-	.tips {
-		font-size: 24upx;
-		color: $font-color-light;
-		line-height: 60upx;
-		padding-left: 30upx;
-	}
-	.circle {
-		position: absolute;
-		left: -6upx;
-		bottom: -10upx;
-		z-index: 10;
-		width: 20upx;
-		height: 20upx;
-		background: #f3f3f3;
-		border-radius: 100px;
-		&.r {
-			left: auto;
-			right: -6upx;
-		}
 	}
 }
 </style>

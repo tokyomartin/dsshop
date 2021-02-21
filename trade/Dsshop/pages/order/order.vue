@@ -10,7 +10,7 @@
 				{{item.text}}
 			</view>
 		</view>
-		<swiper :current="tabCurrentIndex" class="swiper-box" duration="300" @change="changeTab">
+		<swiper :current="tabCurrentIndex" class="swiper-box" duration="300" :disable-touch="true">
 			<swiper-item class="tab-content" v-for="(tabItem,tabIndex) in navList" :key="tabIndex">
 				<scroll-view 
 					class="list-scroll-content" 
@@ -66,6 +66,9 @@
 							<block v-if="item.state === 3">
 								<button class="action-btn recom" @tap="confirmReceipt(item)">确认收货</button>
 							</block>
+							<block v-if="item.state === 4">
+								<button class="action-btn recom" @tap="goScore(item)">立即评价</button>
+							</block>
 						</view>
 					</view>
 					 
@@ -81,7 +84,7 @@
 	import {mapMutations} from 'vuex'
 	import uniLoadMore from '@/components/uni-load-more/uni-load-more.vue';
 	import empty from "@/components/empty";
-	import Indents from '../../api/indents'
+	import GoodIndent from '../../api/goodIndent'
 	export default {
 		components: {
 			uniLoadMore,
@@ -125,18 +128,12 @@
 						loadingType: 'more',
 						orderList: []
 					},
-					// {
-					// 	state: 4,
-					// 	text: '待评价',
-					// 	loadingType: 'more',
-					// 	orderList: []
-					// },
-					// {
-					// 	state: 5,
-					// 	text: '售后',
-					// 	loadingType: 'more',
-					// 	orderList: []
-					// }
+					{
+						state: 4,
+						text: '待评价',
+						loadingType: 'more',
+						orderList: []
+					}
 				],
 			};
 		},
@@ -182,10 +179,11 @@
 				// #endif
 				var orderList = []
 				let that =this
-				await Indents.getList({
+				await GoodIndent.getList({
 					limit: 5,
 					page: this.page,
 					index: index,
+					sort: '+created_at',
 					startTime: this.details.startTime,
 					endTime: this.details.endTime,
 					search: search
@@ -235,15 +233,6 @@
 				})
 				
 			}, 
-
-			//swiper 切换
-			changeTab(e){
-				this.tabCurrentIndex = e.target.current
-				this.page = 1
-				if(this.swiperTab){
-					this.loadData('tabChange')
-				}
-			},
 			//顶部tab点击
 			tabClick(index){
 				this.swiperTab = false
@@ -259,7 +248,7 @@
 				    content: '是否确认删除订单？',
 				    success: function (res) {
 						if (res.confirm) {
-							Indents.deleteSubmit(that.navList[that.tabCurrentIndex].orderList[index].id,function(res){
+							GoodIndent.destroy(that.navList[that.tabCurrentIndex].orderList[index].id,function(res){
 								that.navList[that.tabCurrentIndex].orderList.splice(index, 1)
 								that.$api.msg(`删除成功`)
 								uni.hideLoading()
@@ -282,7 +271,7 @@
 				    content: '是否确认取消订单？',
 				    success: function (res) {
 						if (res.confirm) {
-							Indents.getCancel(item.id,function(res){
+							GoodIndent.cancel(item.id,function(res){
 								that.$api.msg(`操作成功`)
 								that.refreshOderList()
 							})
@@ -346,12 +335,12 @@
 						loadingType: 'more',
 						orderList: []
 					},
-					// {
-					// 	state: 4,
-					// 	text: '待评价',
-					// 	loadingType: 'more',
-					// 	orderList: []
-					// },
+					{
+						state: 4,
+						text: '待评价',
+						loadingType: 'more',
+						orderList: []
+					}
 					// {
 					// 	state: 5,
 					// 	text: '售后',
@@ -428,7 +417,7 @@
 				    content: '是否确认收货？',
 				    success: function (res) {
 						if (res.confirm) {
-							Indents.getReceipt(item.id,function(res){
+							GoodIndent.receipt(item.id,function(res){
 								that.$api.msg(`操作成功`)
 								that.refreshOderList()
 							})
@@ -436,6 +425,18 @@
 				    }
 				})
 				
+			},
+			// 评价
+			goScore(item){
+				
+				uni.navigateTo({
+					url: `/pages/order/score?id=${item.id}`
+				})
+			},
+			//评价成功后回调
+			refreshOderList(){
+				// 需要重新加载
+				this.loadData()
 			},
 		},
 	}

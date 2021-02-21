@@ -16,7 +16,7 @@
 
 		<view class="introduce-section">
 			<text class="title">{{ getList.name }}</text>
-			<view class="price-box">
+			<view class="price-box" v-if="inventoryFlag">
 				<text class="price-tip">¥</text>
 				<template v-if="getList.price_show">
 					<text class="price" v-if="getList.price_show.length > 1">{{ getList.price_show[0] }} - {{ getList.price_show[1] }}</text>
@@ -26,7 +26,6 @@
 					<text class="m-price" v-if="getList.market_price_show.length > 1">¥{{ getList.market_price_show[1] }}</text>
 					<text class="m-price" v-else-if="getList.market_price_show.length === 1">¥{{ getList.market_price_show[0] }}</text>
 				</template>
-				<!-- <text class="coupon-tip">7折</text> -->
 			</view>
 			<view class="bot-row">
 				<!-- <text>销量: {{getList.sales}}</text> -->
@@ -34,21 +33,6 @@
 				<text>销量: {{ getList.sales}}</text>
 			</view>
 		</view>
-
-		<!--  分享 -->
-		<!-- <view class="share-section" @click="share">
-			<view class="share-icon">
-				<text class="yticon icon-xingxing"></text>
-				返
-			</view>
-			<text class="tit">该商品分享可领49减10红包</text>
-			<text class="yticon icon-bangzhu1"></text>
-			<view class="share-btn">
-				立即分享
-				<text class="yticon icon-you"></text>
-			</view>
-		</view> -->
-
 		<view class="c-list">
 			<block v-if="getList.is_delete || getList.is_show !== 1">
 				<view v-if="specificationDefaultDisplay" class="c-row b-b">
@@ -68,24 +52,32 @@
 					<text class="yticon icon-you"></text>
 				</view>
 			</block>
-			<!-- <view class="c-row b-b">
-				<text class="tit">促销活动</text>
-				<view class="con-list">
-					<text>新人首单送20元无门槛代金券</text>
-					<text>订单满50减10</text>
-					<text>订单满100减30</text>
-					<text>单笔购买满两件免邮费</text>
+			<view class="c-row b-b" @click="changeShow(true)">
+				<text class="tit">优惠券</text>
+				<text class="con t-r red"></text>
+				<text class="yticon icon-you"></text>
+			</view>
+		</view>
+		<!-- 评价 -->
+		<view class="eva-section">
+			<view class="e-header">
+				<text class="tit">评价</text>
+				<text>({{commentTotal}})</text>
+				<navigator hover-class="none" class="tip" :url="'comment?id='+ id">查看全部</navigator>
+				<text class="yticon icon-you"></text>
+			</view>
+			<view class="eva-box" v-for="(item,index) in commentList" :key="index">
+				<image class="portrait" :src="item.comment.portrait || '/static/missing-face.png'"  mode="aspectFill" lazy-load></image>
+				<view class="right">
+					<text class="name">{{item.comment.name}}</text>
+					<text class="con">{{item.comment.details}}</text>
+					<view class="bot">
+						<text class="attr">购买类型：<span v-for="(ite,ind) in item.good_sku.product_sku" :key="ind" class="padding-right-xs">{{ite.value}}</span></text>
+						<text class="time">{{item.comment.created_at.split(' ')[0]}}</text>
+					</view>
 				</view>
 			</view>
-			<view class="c-row b-b">
-				<text class="tit">服务</text>
-				<view class="bz-list con">
-					<text>7天无理由退换货 ·</text>
-					<text>假一赔十 ·</text>
-				</view>
-			</view> -->
 		</view>
-
 		<view class="detail-desc">
 			<view class="d-header"><text>图文详情</text></view>
 			<u-parse :content="getList.details" lazyLoad/>
@@ -105,7 +97,7 @@
 				<text class="yticon icon-shoucang"></text>
 				<text>收藏</text>
 			</view>
-			<view class="action-btn-group" v-if="getList.is_delete  || getList.is_show !== 1">
+			<view class="action-btn-group" v-if="getList.is_delete  || getList.is_show !== 1 || !inventoryFlag">
 				<button type="primary" class=" action-btn no-border buy-now-btn" disabled>立即购买</button>
 				<button type="primary" class=" action-btn no-border add-cart-btn" disabled>加入购物车</button>
 			</view>
@@ -120,10 +112,11 @@
 			<view class="mask"></view>
 			<view class="layer attr-content" @click.stop="stopPrevent"><sku :getList="getList" :buy="buy" @toggleSpec="toggleSpec" @purchasePattern="purchasePattern"></sku></view>
 		</view>
+		<!-- 优惠券-模态层弹窗  -->
+		<coupon :getList="couponList" :show="couponShow" @changeShow="changeShow"></coupon>
 		<!-- 已删除或还未发布-->
 		<view v-if="getList.is_delete || getList.is_show !== 1" class="sold-out padding-sm">商品已经下架了~</view>
-		<!-- 分享 -->
-		<!-- <share ref="share" :contentHeight="580" :shareList="shareList"></share> -->
+		<view v-if="inventoryFlag == false" class="sold-out padding-sm">商品已经售完了~</view>
 	</view>
 </template>
 
@@ -135,6 +128,9 @@ import { param2Data } from '@/components/sku/sku2param';
 import sku from '@/components/sku';
 import Browse from '../../api/browse';
 import Collect from '../../api/collect';
+import coupon from '@/components/coupon'
+import CouponApi from '../../api/coupon'
+import Comment from '../../api/comment'
 import {
 		mapState,
 		mapMutations
@@ -143,7 +139,8 @@ export default {
 	components: {
 		share,
 		sku,
-		uParse
+		uParse,
+		coupon
 	},
 	data() {
 		return {
@@ -155,6 +152,7 @@ export default {
 				is_delete:0,
 				is_show:1
 			},
+			inventoryFlag: true, //true有货; false 无货
 			shoppingAttributes: [], //购物属性
 			favorite: false,
 			shareList: [],
@@ -162,7 +160,11 @@ export default {
 			resources_many: [],
 			video: '',
 			index: 0,
-			buy: false
+			buy: false,
+			couponList: [],
+			couponShow: false,
+			commentList: [],
+			commentTotal:0
 		};
 	},
 	async onLoad(options) {
@@ -170,6 +172,10 @@ export default {
 		if (id) {
 			this.id = id;
 			this.loadData(id);
+			this.goodEvaluate()
+			if (this.hasLogin){
+				this.getCoupon()
+			}
 		}
 	},
 	computed:{
@@ -179,12 +185,11 @@ export default {
 		this.videoContext = uni.createVideoContext('myVideo')
 	},
 	methods: {
-		...mapMutations(['loginCheck']),
 		//获取详情
 		async loadData(id) {
 			// 商品详情
 			const that = this;
-			await Good.getDetails(id, {}, function(res) {
+			await Good.detail(id, {}, function(res) {
 				if (res.resources_many.length > 0) {
 					res.resources_many.forEach((item,index)=>{
 						if(item.depict.indexOf('_video') !== -1){
@@ -199,12 +204,15 @@ export default {
 					})
 				}
 				that.getList = res
+				if(that.getList.good_sku.length<=0){
+					that.inventoryFlag = false
+				}
 				if (that.hasLogin){
 					that.browse()
 				}
 			})
 			if (that.hasLogin){
-				await Collect.getDetails(id, function(res) {
+				await Collect.detail(id, function(res) {
 					if(res === 1){
 						that.favorite = true
 					} else {
@@ -231,9 +239,7 @@ export default {
 		//访问记录
 		browse() {
 			const getList = this.getList
-			Browse.createSubmit(getList,function(res){
-				
-			})
+			Browse.create(getList, function(res) {})
 		},
 		// 图片预览
 		imgList() {
@@ -251,16 +257,8 @@ export default {
 				}
 			});
 		},
-		goLogin(){
-			if(!this.hasLogin){
-				uni.navigateTo({
-					url:'/pages/public/login'
-				})
-			}
-		},
 		//规格弹窗开关
 		toggleSpec(state) {
-			this.loginCheck()
 			if (!this.hasLogin && state === true){
 				this.$api.msg('请先登录')
 				return false
@@ -286,10 +284,10 @@ export default {
 			if (this.hasLogin){
 				const getList = this.getList
 				if(this.favorite){	//移除
-					Collect.deleteSubmit(getList.id,function(res){
+					Collect.destroy(getList.id,function(res){
 					})
 				}else{	//添加
-					Collect.createSubmit(getList,function(res){
+					Collect.create(getList,function(res){
 						
 					})
 				}
@@ -300,7 +298,50 @@ export default {
 		purchasePattern(data) {
 			this.specificationDefaultDisplay = data;
 		},
-		stopPrevent() {}
+		stopPrevent() {},
+		// 优惠券显示隐藏
+		changeShow(val){
+			if (!this.hasLogin){
+				this.$api.msg('请先登录')
+				return false
+			}
+			this.couponShow = val
+		},
+		// 获取优惠券列表
+		getCoupon(){
+			const that = this
+			CouponApi.getList({}, function(res) {
+				that.couponList = []
+				res.data.forEach(item=>{
+					let data = {
+						id: item.id,
+						money: item.cost/100,
+						title: item.explain,
+						type: item.type,
+						time: item.starttime.split(' ')[0].replace(/-/g,".") + "-" + item.endtime.split(' ')[0].replace(/-/g,"."),
+					}
+					if(item.limit_get && item.user_coupon_count >= item.limit_get){
+						data.state = "2"
+					} else{
+						data.state = "1"
+					}
+					that.couponList.push(data)
+				})
+			})
+		},
+		// 获取评价列表
+		goodEvaluate(){
+			const that = this
+			Comment.good({
+				limit: 2,
+				page: 1,
+				good_id:that.id,
+				sort:'-created_at'
+			},function(res){
+				that.commentList = res.data
+				that.commentTotal = res.total
+			})
+		}
 	}
 };
 </script>
@@ -556,21 +597,10 @@ page {
 		font-size: $font-base + 2upx;
 		color: $font-color-dark;
 		position: relative;
-
 		text {
 			padding: 0 20upx;
 			background: #fff;
 			position: relative;
-		}
-		&:after {
-			position: absolute;
-			left: 50%;
-			top: 50%;
-			transform: translateX(-50%);
-			width: 300upx;
-			height: 0;
-			content: '';
-			border-bottom: 1px solid #ccc;
 		}
 	}
 }
