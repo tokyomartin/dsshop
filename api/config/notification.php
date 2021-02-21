@@ -22,8 +22,12 @@ return [
         'refund_success'=>env('WECHAT_SUBSCRIPTION_INFORMATION_REFUND_SUCCESS',''),  //退款成功通知
         'admin_order_send_good'=>env('WECHAT_SUBSCRIPTION_INFORMATION_ADMIN_ORDER_SEND_GOOD',''),  //待发货提醒
         'admin_order_completion'=>env('WECHAT_SUBSCRIPTION_INFORMATION_ADMIN_ORDER_COMPLETION',''),  //订单完成通知
+        // 评价_s
         'order_evaluate'=>env('WECHAT_SUBSCRIPTION_INFORMATION_ORDER_EVALUATE',''),  //订单评价提醒
         'admin_order_evaluate'=>env('WECHAT_SUBSCRIPTION_INFORMATION_ADMIN_ORDER_EVALUATE',''),  //用户评价通知
+        // 评价_e
+        // 分销_s
         'recommend_success'=>env('WECHAT_SUBSCRIPTION_INFORMATION_RECOMMEND_SUCCESS',''),  //	推荐会员成功提醒
+        // 分销_e
     ],
 ];
