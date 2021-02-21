@@ -5,7 +5,7 @@
     "pages/set/set",
     "pages/set/message",
     "pages/set/about",
-    "pages/set/unsubscribe",
+    "pages/set/cancel",
     "pages/userinfo/userinfo",
     "pages/userinfo/email",
     "pages/cart/cart",
@@ -28,7 +28,14 @@
     "pages/money/paySuccess",
     "pages/notice/notice",
     "pages/category/category",
-    "pages/product/list"
+    "pages/product/list",
+    "pages/article/column",
+    "pages/article/index",
+    "pages/article/details",
+    "pages/coupon/index",
+    "pages/order/score",
+    "pages/product/comment",
+    "pages/user/share"
   ],
   "subPackages": [],
   "window": {
