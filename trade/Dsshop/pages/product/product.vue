@@ -172,8 +172,10 @@ export default {
 		if (id) {
 			this.id = id;
 			this.loadData(id);
-			this.getCoupon()
 			this.goodEvaluate()
+			if (this.hasLogin){
+				this.getCoupon()
+			}
 		}
 	},
 	computed:{

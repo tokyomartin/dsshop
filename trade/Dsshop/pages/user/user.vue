@@ -73,7 +73,7 @@
 				<list-cell icon="icon-share" iconColor="#9789f7" @eventClick="navTo('/pages/user/share')" title="分享" tips="邀请好友赢10元奖励"></list-cell>
 				<list-cell icon="icon-shoucang_xuanzhongzhuangtai" iconColor="#54b4ef" @eventClick="navTo('/pages/user/collect')" title="我的收藏"></list-cell>
 				<list-cell icon="icon-comment" iconColor="#e07472" title="通知" :tips="noticeNumber ? noticeNumber : null" @eventClick="navTo('/pages/notice/notice')"></list-cell>
-				<list-cell icon="icon-xiaoxi" iconColor="#9789f7" title="帮助中心" @eventClick="navTo('/pages/article/column')"></list-cell>
+				<list-cell icon="icon-xiaoxi" iconColor="#9789f7" title="帮助中心" @eventClick="navToNoValidation('/pages/article/column')"></list-cell>
 				<list-cell icon="icon-shezhi1" iconColor="#e07472" title="设置" @eventClick="navTo('/pages/set/set')"></list-cell>
 			</view>
 		</view>

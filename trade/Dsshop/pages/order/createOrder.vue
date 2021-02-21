@@ -158,7 +158,11 @@
 		onLoad(option){
 			this.loginCheck()
 			this.loadData()
-			this.getCouponList()
+		},
+		watch: {
+			total(newVal) {
+				this.getCouponList(newVal)
+			}
 		},
 		methods: {
 			...mapMutations(['loginCheck']),
