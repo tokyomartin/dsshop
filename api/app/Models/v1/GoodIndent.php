@@ -40,7 +40,8 @@ class GoodIndent extends Model
     const GOOD_INDENT_STATE_REFUND = 7; //状态：已退款
     const GOOD_INDENT_STATE_REFUND_PROCESSING = 8; //状态：退款处理中
     const GOOD_INDENT_STATE_REFUND_FAILURE = 9; //状态：退款失败
-    const GOOD_INDENT_STATE_HAVE_EVALUATION = 10; //状态：已评价
+    const GOOD_INDENT_STATE_EVALUATE = 11; //状态：待评价
+    const GOOD_INDENT_STATE_HAVE_EVALUATION = 11; //状态：已评价
     const GOOD_INDENT_REFUND_WAY_BALANCE = 0; //退款方式：退到余额
     const GOOD_INDENT_REFUND_WAY_BACK = 1; //退款方式：原路退回
     public static $withoutAppends = true;
@@ -211,6 +212,9 @@ class GoodIndent extends Model
                         break;
                     case static::GOOD_INDENT_STATE_REFUND_FAILURE:
                         $return = '退款失败';
+                        break;
+                    case static::GOOD_INDENT_STATE_EVALUATE:
+                        $return = '待评价';
                         break;
                     case static::GOOD_INDENT_STATE_HAVE_EVALUATION:
                         $return = '已评价';

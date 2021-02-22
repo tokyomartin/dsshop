@@ -66,7 +66,7 @@
 							<block v-if="item.state === 3">
 								<button class="action-btn recom" @tap="confirmReceipt(item)">确认收货</button>
 							</block>
-							<block v-if="item.state === 4">
+							<block v-if="item.state === 10">
 								<button class="action-btn recom" @tap="goScore(item)">立即评价</button>
 							</block>
 						</view>
@@ -129,7 +129,7 @@
 						orderList: []
 					},
 					{
-						state: 4,
+						state: 10,
 						text: '待评价',
 						loadingType: 'more',
 						orderList: []
@@ -208,7 +208,7 @@
 							case 3:
 							item.class= 'text-green'
 							break;
-							case 4:
+							case 10:
 							item.class= 'text-brown'
 							break;
 						}
@@ -336,7 +336,7 @@
 						orderList: []
 					},
 					{
-						state: 4,
+						state: 10,
 						text: '待评价',
 						loadingType: 'more',
 						orderList: []
