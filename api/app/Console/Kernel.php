@@ -5,6 +5,7 @@ namespace App\Console;
 use App\Console\Commands\AutomaticDelivery;
 use App\Console\Commands\CouponExpireDispose;
 use App\Console\Commands\CouponStartDispose;
+use App\Console\Commands\OrderInvalidationHandling;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -19,6 +20,7 @@ class Kernel extends ConsoleKernel
         CouponStartDispose::class,
         CouponExpireDispose::class,
         AutomaticDelivery::class
+        OrderInvalidationHandling::class,
     ];
 
     /**
@@ -48,6 +50,8 @@ class Kernel extends ConsoleKernel
         //以下任务调试可直接删除
         //自动发货
         $schedule->command('automatic:delivery')->everyMinute();
+        //订单失效处理
+        $schedule->command('order:invalidation')->everyMinute();
     }
 
     /**
