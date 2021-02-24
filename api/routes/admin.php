@@ -73,6 +73,7 @@ Route::prefix('v1')->namespace('v1')->group(function () {
         Route::post('indent/dhl', 'IndentController@dhl')->middleware(['permissions:IndentDhl']); //保存配送信息
         Route::post('indent/refund/{id}', 'IndentController@refund')->middleware(['permissions:IndentRefund']); //退款
         Route::get('indent/query/{id}', 'IndentController@query')->middleware(['permissions:IndentDetail']);  //查询订单状态
+        Route::post('indent/receiving', 'IndentController@receiving')->middleware(['permissions:IndentShipment']); //延长收货时间
         Route::get('redis', 'RedisServiceController@list')->middleware(['permissions:RedisServiceList']);    //Redis列表
         Route::get('redis/{name}', 'RedisServiceController@detail')->middleware(['permissions:RedisServiceDetail']);    //Redis详情
         Route::post('redis/destroy/{id}', 'RedisServiceController@destroy')->middleware(['permissions:RedisServiceDestroy']);    //删除Redis
@@ -91,130 +92,5 @@ Route::prefix('v1')->namespace('v1')->group(function () {
         Route::get('statistic/source', 'StatisticsController@source')->middleware(['permissions:StatisticsVisit']);    //来源分析
         Route::get('statistic/age_and_sex', 'StatisticsController@ageAndSex')->middleware(['permissions:StatisticsAgeAndSex']);    //来源分析
         Route::get('statistic/pay', 'StatisticsController@pay')->middleware(['permissions:StatisticsPay']);    //交易分析
-    });
-    //app
-    // 无需任何验证
-    Route::prefix('app')->namespace('Client')->group(function () {
-        Route::any('serve', 'AppController@serve');    //处理应用的请求消息
-        Route::any('paymentNotify', 'AppController@paymentNotify');    //支付回调
-        Route::any('refundNotify', 'AppController@refundNotify');    //退款回调
-    });
-    // 需要secret验证
-    Route::prefix('app')->namespace('Client')->middleware(['appverify'])->group(function () {
-        Route::post('uploadPictures', 'AppController@uploadPictures');  //上传
-        Route::post('cellphoneCode', 'AppController@cellphoneCode');    //获取手机验证码
-        Route::post('emailCode', 'AppController@emailCode');    //获取邮箱验证码
-        Route::post('login', 'LoginController@login');    //登录
-        Route::post('register', 'LoginController@register');    //注册
-        Route::post('findPassword', 'LoginController@findPassword');    //找回密码
-        Route::post('miniLogin', 'LoginController@miniLogin');    //小程序换取openid
-        Route::post('authorization', 'LoginController@authorization');    //授权登录
-        Route::post('verifyEmail', 'AppController@verifyEmail');    //绑定邮箱
-        Route::post('user/notification', 'UserController@notification');    //更新通知状态
-        Route::get('good', 'GoodController@list');    //商品列表
-        Route::get('good/{id}', 'GoodController@detail');    //商品详情
-        Route::get('goodCategory', 'GoodController@category');    //商品分类展示
-        Route::get('banner', 'BannerController@list');    //轮播列表
-    });
-    // 需要用户登录验证
-    Route::prefix('app')->namespace('Client')->middleware(['appverify', 'auth:web'])->group(function () {
-        Route::post('logout', 'LoginController@logout');    //登出
-        Route::get('user', 'UserController@detail');    //用户信息
-        Route::post('user', 'UserController@edit');    //保存用户信息
-        Route::post('cancel', 'UserController@cancel');    //注销账号
-        Route::get('moneyLog', 'MoneyLogController@list');    //收支列表
-        Route::get('moneyLog/{id}', 'MoneyLogController@detail');    //收支详情
-        Route::post('unifiedPayment', 'AppController@unifiedPayment');    //在线支付
-        Route::post('balancePay', 'AppController@balancePay');    //余额支付
-        Route::get('goodIndent', 'GoodIndentController@list');    //订单列表
-        Route::post('goodIndent', 'GoodIndentController@create');    //创建订单
-        Route::post('goodIndent/addShoppingCart', 'GoodIndentController@addShoppingCart');    //添加到购物车
-        Route::get('goodIndent/detail/{id}', 'GoodIndentController@detail');    //订单详情
-        Route::post('goodIndent/synchronizationInventory', 'GoodIndentController@synchronizationInventory');    //同步线上商品库存
-        Route::get('goodIndent/pay/{id}', 'GoodIndentController@pay');    //支付订单详情
-        Route::post('goodIndent/receipt/{id}', 'GoodIndentController@receipt');    //确认收货
-        Route::post('goodIndent/cancel/{id}', 'GoodIndentController@cancel');    //取消订单
-        Route::post('goodIndent/destroy/{id}', 'GoodIndentController@destroy');    //删除订单
-        Route::get('goodIndent/quantity', 'GoodIndentController@quantity');    //订单数量统计
-        Route::get('shipping', 'ShippingController@list');    //收货地址列表
-        Route::post('shipping', 'ShippingController@create');    //创建收货地址
-        Route::post('shipping/{id}', 'ShippingController@edit');    //保存收货地址
-        Route::post('shipping/default/get', 'ShippingController@defaultGet');    //获取默认收货地址
-        Route::post('shipping/destroy/{id}', 'ShippingController@destroy');    //删除收货地址
-        Route::post('shipping/default/set', 'ShippingController@defaultSet');    //设为默认
-        Route::get('browse', 'BrowseController@list');    //浏览记录列表
-        Route::post('browse', 'BrowseController@create');    //创建浏览记录
-        Route::get('collect', 'CollectController@list');   //收藏列表
-        Route::get('collect/{id}', 'CollectController@detail');   //收藏详情
-        Route::post('collect', 'CollectController@create');  //创建收藏
-        Route::post('collect/destroy/{id}', 'CollectController@destroy'); //删除收藏
-        Route::get('notification', 'NotificationController@list');    //列表
-        Route::get('notification/unread', 'NotificationController@unread');    //未读数量
-        Route::post('notification/destroy/{id}', 'NotificationController@destroy');    //删除通知
-    });
-    // 插件
-    Route::namespace('Plugin')->group(function () {
-        // 插件后台
-        Route::prefix('admin')->namespace('Admin')->middleware(['auth:api'])->group(function () {
-            //栏目文章_s
-            Route::get('column', 'ColumnController@list')->middleware(['permissions:ColumnList']);    //栏目列表
-            Route::get('column/{id}', 'ColumnController@detail')->middleware(['permissions:ColumnEdit']);    //栏目详情
-            Route::post('column', 'ColumnController@create')->middleware(['permissions:ColumnCreate']);    //栏目添加
-            Route::post('column/{id}', 'ColumnController@edit')->middleware(['permissions:ColumnEdit']);    //栏目修改
-            Route::post('column/destroy/{id}', 'ColumnController@destroy')->middleware(['permissions:ColumnDestroy']);    //栏目删除
-            Route::get('article', 'ArticleController@list')->middleware(['permissions:ArticleList']);    //文章列表
-            Route::get('article/{id}', 'ArticleController@detail')->middleware(['permissions:ArticleEdit']);    //文章详情
-            Route::post('article', 'ArticleController@create')->middleware(['permissions:ArticleCreate']);    //文章添加
-            Route::post('article/{id}', 'ArticleController@edit')->middleware(['permissions:ArticleEdit']);    //文章修改
-            Route::post('article/destroy/{id}', 'ArticleController@destroy')->middleware(['permissions:ArticleDestroy']);    //文章删除
-            //栏目文章_e
-            //优惠券_s
-            Route::get('coupon', 'CouponController@list')->middleware(['permissions:CouponList']);    //优惠券列表
-            Route::post('coupon', 'CouponController@create')->middleware(['permissions:CouponCreate']);    //优惠券添加
-            Route::post('coupon/{id}', 'CouponController@edit')->middleware(['permissions:CouponEdit']);    //优惠券操作
-            Route::post('coupon/destroy/{id}', 'CouponController@destroy')->middleware(['permissions:CouponDestroy']);    //优惠券删除
-            //优惠券_e
-            //评价_s
-            Route::get('comment', 'CommentController@list')->middleware(['permissions:CommentList']);    //评价列表
-            Route::post('comment', 'CommentController@create')->middleware(['permissions:CommentCreate']);    //评价回复
-            Route::post('comment/{state}', 'CommentController@edit')->middleware(['permissions:CommentEdit']);    //评价操作
-            Route::post('comment/destroy/{id}', 'CommentController@destroy')->middleware(['permissions:CommentDestroy']);    //评价删除
-            //评价_e
-            //分销_s
-            Route::get('distribution', 'DistributionController@list')->middleware(['permissions:DistributionList']);    //分销列表
-            Route::post('distribution', 'DistributionController@create')->middleware(['permissions:DistributionCreate']);    //分销添加
-            Route::post('distribution/{photo}', 'DistributionController@edit')->middleware(['permissions:DistributionEdit']);    //分销修改
-            Route::post('distribution/destroy/{photo}', 'DistributionController@destroy')->middleware(['permissions:DistributionDestroy']);    //分销删除
-            //分销_e
-            //前台插件列表
-        });
-        // 插件前台
-        Route::prefix('app')->namespace('Client')->middleware(['appverify', 'auth:web'])->group(function () {
-            //优惠券_s
-            Route::get('coupon', 'CouponController@list');    //优惠券列表
-            Route::get('coupon/user/count', 'CouponController@count');    //我的优惠券数量
-            Route::get('coupon/user', 'CouponController@user');    //我的优惠券列表
-            Route::post('coupon', 'CouponController@create');    //领取优惠券
-            //优惠券_e
-            //评价_s
-            Route::get('comment/detail/{id}', 'CommentController@detail');    //获取需要评价的商品列表
-            Route::post('comment/{id}', 'CommentController@create');    //评价
-            //评价_e
-            //APP验证插件列表
-        });
-        Route::prefix('app')->namespace('Client')->middleware(['appverify'])->group(function () {
-            //栏目文章_s
-            Route::get('column', 'ColumnController@list');    //栏目列表
-            Route::get('column/{id}', 'ColumnController@detail');    //栏目详情
-            Route::post('column/pv/{id}', 'ColumnController@pv');    //增加栏目访问量
-            Route::get('article/column/{id}', 'ArticleController@list');    //文章列表
-            Route::get('article/{id}', 'ArticleController@detail');    //文章详情
-            Route::post('article/pv/{id}', 'ArticleController@pv');    //增加文章访问量
-            //栏目文章_e
-            //评价_s
-            Route::get('comment/good', 'CommentController@good');    //获取商品评价列表
-            //评价_e
-            //APP无需验证插件列表
-        });
     });
 });

@@ -22,7 +22,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int refund_way
  * @property string pay_time
  * @property int refund_reason
+ * @property int is_automatic_receiving
  * @property string shipping_time
+ * @property string receiving_time
  * @property string created_at
  * @property string confirm_time
  * @property string refund_time
@@ -44,6 +46,8 @@ class GoodIndent extends Model
     const GOOD_INDENT_STATE_HAVE_EVALUATION = 11; //状态：已评价
     const GOOD_INDENT_REFUND_WAY_BALANCE = 0; //退款方式：退到余额
     const GOOD_INDENT_REFUND_WAY_BACK = 1; //退款方式：原路退回
+    const GOOD_INDENT_IS_AUTOMATIC_RECEIVING_YES = 1; //自动发货：是
+    const GOOD_INDENT_IS_AUTOMATIC_RECEIVING_NO = 0; //自动发货：否
     public static $withoutAppends = true;
     protected $appends = ['state_show'];
 

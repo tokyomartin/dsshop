@@ -5,6 +5,7 @@ namespace App\Console;
 use App\Console\Commands\AutomaticDelivery;
 use App\Console\Commands\CouponExpireDispose;
 use App\Console\Commands\CouponStartDispose;
+use App\Console\Commands\AutomaticReceiving;
 use App\Console\Commands\OrderInvalidationHandling;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -21,6 +22,7 @@ class Kernel extends ConsoleKernel
         CouponExpireDispose::class,
         AutomaticDelivery::class
         OrderInvalidationHandling::class,
+        AutomaticReceiving::class,
     ];
 
     /**
@@ -50,6 +52,9 @@ class Kernel extends ConsoleKernel
         //以下任务调试可直接删除
         //自动发货
         $schedule->command('automatic:delivery')->everyMinute();
+        if (config('dswjcms.automaticReceivingState')) {    //是否开启自动收货
+            $schedule->command('automatic:receiving')->everyMinute();
+        }
         //订单失效处理
         $schedule->command('order:invalidation')->everyMinute();
     }
