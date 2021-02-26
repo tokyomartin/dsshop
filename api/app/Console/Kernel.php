@@ -20,9 +20,10 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         CouponStartDispose::class,
         CouponExpireDispose::class,
-        AutomaticDelivery::class
+        AutomaticDelivery::class,
         OrderInvalidationHandling::class,
         AutomaticReceiving::class,
+        AutomaticDelivery::class,
     ];
 
     /**
@@ -54,6 +55,9 @@ class Kernel extends ConsoleKernel
         $schedule->command('automatic:delivery')->everyMinute();
         if (config('dswjcms.automaticReceivingState')) {    //是否开启自动收货
             $schedule->command('automatic:receiving')->everyMinute();
+        }
+        if (config('comment.automaticEvaluateState')) {    //是否开启自动好评
+            $schedule->command('automatic:evaluate')->everyMinute();
         }
         //订单失效处理
         $schedule->command('order:invalidation')->everyMinute();
