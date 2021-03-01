@@ -54,7 +54,7 @@ class Kernel extends ConsoleKernel
         //自动发货
         $schedule->command('automatic:delivery')->everyMinute();
         if (config('dswjcms.automaticReceivingState')) {    //是否开启自动收货
-            $schedule->command('automatic:receiving')->everyMinute();
+            $schedule->command('automatic:receiving')->dailyAt('00:20');
         }
         if (config('comment.automaticEvaluateState')) {    //是否开启自动好评
             $schedule->command('automatic:evaluate')->everyMinute();
