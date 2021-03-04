@@ -33,6 +33,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string time
  * @property string timing
  * @property int freight_id
+ * @property int discount
  *
  * @method static find(int $id)
  */
@@ -377,6 +378,35 @@ class Good extends Model
     public function setCostPriceAttribute($value)
     {
         $this->attributes['cost_price'] = sprintf("%01.2f", $value) * 100;
+    }
+
+    /**
+     * 会员折扣价显示
+     *
+     * @param $row
+     * @return string
+     */
+    public function getDiscountAttribute($row)
+    {
+        if (isset($this->attributes['discount'])) {
+            if (self::$withoutAppends) {
+                $return = $this->attributes['discount'];
+            } else {
+                $return = $this->attributes['discount'] / 100;
+            }
+            return $return > 0 ? $return : '';
+        }
+    }
+
+    /**
+     * 会员折扣价存入
+     *
+     * @param $row
+     * @return string
+     */
+    public function setDiscountAttribute($value)
+    {
+        $this->attributes['discount'] = sprintf("%01.2f", $value) * 100;
     }
 
     /**

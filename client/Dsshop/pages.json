@@ -241,6 +241,13 @@
 			}
 		}
 		// 插件列表
+		,
+		{
+			"path": "pages/vip/index",
+			"style": {
+				"navigationBarTitleText": "超级会员"
+			}
+		}
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

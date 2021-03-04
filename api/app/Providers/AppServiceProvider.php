@@ -55,5 +55,8 @@ class AppServiceProvider extends ServiceProvider
         PaymentLog::observe(GoodIndentPaymentSucceedObserver::class);
         PaymentLog::observe(GoodIndentRefundObserver::class);
         // 插件
+        \App\Models\v1\PaymentLog::observe(\App\Observers\PaymentLog\VipPaymentCreateObserver::class);
+        \App\Models\v1\PaymentLog::observe(\App\Observers\PaymentLog\VipPaymentSucceedObserver::class);
+        \App\Models\v1\GoodIndent::observe(\App\Observers\GoodIndent\CreateIndentVipFreightReductionObserver::class);
     }
 }

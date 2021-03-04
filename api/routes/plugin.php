@@ -20,6 +20,7 @@ Route::prefix('v'.config('dsshop.versions'))->namespace('v'.config('dsshop.versi
         // 插件前台
         Route::prefix('app')->namespace('Client')->middleware(['appverify', 'auth:web'])->group(function () {
         //APP验证插件列表
+            Route::get('vip', 'VipController@list');  //VIP费用列表
         });
         Route::prefix('app')->namespace('Client')->middleware(['appverify'])->group(function () {
             //APP无需验证插件列表

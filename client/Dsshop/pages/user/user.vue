@@ -11,6 +11,22 @@
 					<text class="username">{{user.nickname || user.cellphone || '游客'}}</text>
 				</view>
 			</view>
+			<view class="vip-card-box">
+				<image class="card-bg" src="/static/vip-card-bg.png" mode=""></image>
+				<view class="b-btn" @click="navTo('/pages/vip/index')">
+					<template v-if="user.vip">查看特权</template>
+					<template v-else>立即开通</template>
+				</view>
+				<view class="tit">
+					<text class="yticon icon-iLinkapp-"></text>
+					超级会员
+				</view>
+				<text class="e-m">超级会员</text>
+				<text class="e-b">
+					<template v-if="user.vip">您的VIP将于{{user.vip_time}}到期</template>
+					<template v-else>开通会员 省钱 省心</template>
+				</text>
+			</view>
 		</view>
 		
 		<view 

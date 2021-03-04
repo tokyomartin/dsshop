@@ -37,6 +37,8 @@ class User extends Authenticatable implements HasLocalePreference
     const USER_NOTIFICATION_WECHAT='wechat';  //通知类型：微信公众号模板消息
     const USER_WECHAT_SUBSCRIBE_YES=1;  //是否关注微信公众平台：是
     const USER_WECHAT_SUBSCRIBE_NO=0;  //是否关注微信公众平台：否
+    const USER_VIP_YES= 1; //VIP状态：1是
+    const USER_VIP_NO= 0; //VIP状态：0否
     protected $appends = ['gender_show','state_show'];
     public static $withoutAppends = true;
 

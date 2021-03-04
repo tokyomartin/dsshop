@@ -104,6 +104,7 @@ class GoodController extends Controller
      * @queryParam  timing string 定时上架时间
      * @queryParam  good_specification array 商品规格
      * @queryParam  good_sku array 商品SKU
+     * @queryParam  discount float  会员折扣价
      */
     public function create(SubmitGoodRequest $request)
     {
@@ -128,6 +129,7 @@ class GoodController extends Controller
             } else {
                 $Good->category_id = $request->category_id;
             }
+            $Good->discount = $request->discount;
             $Good->number = $request->number;
             $Good->freight_id = $request->freight_id;
             $Good->brand_id = $request->brand_id ? $request->brand_id : 0;
@@ -239,7 +241,7 @@ class GoodController extends Controller
      * GoodEdit
      * 保存商品
      * @param SubmitGoodRequest $request
-     * @param  int $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      * @queryParam  id int 商品ID
      * @queryParam  name string 商品名称
@@ -260,6 +262,7 @@ class GoodController extends Controller
      * @queryParam  timing string 定时上架时间
      * @queryParam  good_specification array 商品规格
      * @queryParam  good_sku array 商品SKU
+     * @queryParam  discount float  会员折扣价
      */
     public function edit(SubmitGoodRequest $request, $id)
     {
@@ -282,6 +285,7 @@ class GoodController extends Controller
             } else {
                 $Good->category_id = $request->category_id;
             }
+            $Good->discount = $request->discount;
             $Good->name = $request->name;
             $Good->number = $request->number;
             $Good->freight_id = $request->freight_id;
@@ -424,7 +428,7 @@ class GoodController extends Controller
                 $Good->order_price = $order_price;
                 $Good->save();
                 //删除去除的SKU
-                GoodSku::where('good_id', $Good->id)->whereNotIn('id', $GoodSkuAll)->update(['deleted_at' =>Carbon::now()->toDateTimeString()]);
+                GoodSku::where('good_id', $Good->id)->whereNotIn('id', $GoodSkuAll)->update(['deleted_at' => Carbon::now()->toDateTimeString()]);
             }
             return 1;
         }, 5);
@@ -438,7 +442,7 @@ class GoodController extends Controller
     /**
      * GoodDetail
      * 商品详情
-     * @param  int $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      * @queryParam  id int 商品ID
      */
@@ -479,7 +483,7 @@ class GoodController extends Controller
     /**
      * GoodSpecification
      * 商品规格
-     * @param  int $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      * @queryParam  id int 商品ID
      */
@@ -497,7 +501,7 @@ class GoodController extends Controller
     /**
      * GoodState
      * 变更商品状态
-     * @param  int $id
+     * @param int $id
      * @param Request $request
      * @return \Illuminate\Http\Response
      * @queryParam  id int 商品ID
@@ -539,7 +543,7 @@ class GoodController extends Controller
     /**
      * GoodDestroy
      * 删除商品
-     * @param  int $id
+     * @param int $id
      * @param Request $request
      * @return \Illuminate\Http\Response
      * @queryParam  id int 商品ID
@@ -554,7 +558,7 @@ class GoodController extends Controller
                     return resReturn(0, '请选择内容', Code::CODE_WRONG);
                 }
                 $idData = collect($request->all())->pluck('id');
-                Good::whereIn('id', $idData)->update(['deleted_at' =>Carbon::now()->toDateTimeString()]);
+                Good::whereIn('id', $idData)->update(['deleted_at' => Carbon::now()->toDateTimeString()]);
             }
             return 1;
         }, 5);
