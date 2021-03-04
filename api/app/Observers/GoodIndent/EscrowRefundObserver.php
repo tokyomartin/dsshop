@@ -47,13 +47,14 @@ class EscrowRefundObserver
             $refund = $MiniProgram->refund($goodIndent->PaymentLog->platform, $goodIndent->PaymentLog->number, $goodIndent->PaymentLog->money, $this->request->refund_money * 100, $this->request->refund_reason);
             if ($refund['result'] == 'ok') {
                 $PaymentLog = new PaymentLog();
+                $PaymentLog->user_id = auth('web')->user()->id;
                 $PaymentLog->name = '对订单：' . $goodIndent->identification . '的退款';
                 $PaymentLog->number = $refund['number'];
                 $PaymentLog->money = $this->request->refund_money * 100;
                 $PaymentLog->pay_id = $goodIndent->id; //订单ID
                 $PaymentLog->type = PaymentLog::PAYMENT_LOG_TYPE_GOODS_INDENT_REFUND;
                 $PaymentLog->platform = $goodIndent->PaymentLog->platform;
-                $PaymentLog->pay_type = 'App\Models\v'.config('dswjcms.versions').'\GoodIndent';
+                $PaymentLog->pay_type = 'App\Models\v'.config('dsshop.versions').'\GoodIndent';
                 $PaymentLog->state = PaymentLog::PAYMENT_LOG_STATE_CREATE;
                 $PaymentLog->save();
             }

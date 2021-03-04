@@ -301,6 +301,15 @@
 			}
 		}
 		// 分销_e
+		,
+		// 会员体系_s
+		{
+			"path": "pages/vip/index",
+			"style": {
+				"navigationBarTitleText": "超级会员"
+			}
+		}
+		// 会员体系_e
 		// 插件列表
 	],
 	"globalStyle": {

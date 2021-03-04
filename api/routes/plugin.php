@@ -10,7 +10,7 @@
 |
 */
 //如果有版本控制的话，请复制以下代码，修改版本号;访问地址把v1换成设置的版本号即可
-Route::prefix('v'.config('dswjcms.versions'))->namespace('v'.config('dswjcms.versions'))->group(function () {
+Route::prefix('v'.config('dsshop.versions'))->namespace('v'.config('dsshop.versions'))->group(function () {
     // 插件
     Route::namespace('Plugin')->group(function () {
         // 插件后台
@@ -60,6 +60,7 @@ Route::prefix('v'.config('dswjcms.versions'))->namespace('v'.config('dswjcms.ver
             Route::post('comment/{id}', 'CommentController@create');    //评价
             //评价_e
             //APP验证插件列表
+            Route::get('vip', 'VipController@list');  //VIP费用列表
         });
         Route::prefix('app')->namespace('Client')->middleware(['appverify'])->group(function () {
             //栏目文章_s

@@ -67,5 +67,10 @@ class AppServiceProvider extends ServiceProvider
         // 分销_s
         \App\Models\v1\User::observe(\App\Observers\User\RegistrationIncentivesObserver::class);
         // 分销_e
+        // 会员体系_s
+        \App\Models\v1\PaymentLog::observe(\App\Observers\PaymentLog\VipPaymentCreateObserver::class);
+        \App\Models\v1\PaymentLog::observe(\App\Observers\PaymentLog\VipPaymentSucceedObserver::class);
+        \App\Models\v1\GoodIndent::observe(\App\Observers\GoodIndent\CreateIndentVipFreightReductionObserver::class);
+        // 会员体系_e
     }
 }
