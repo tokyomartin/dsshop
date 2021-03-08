@@ -8,6 +8,8 @@ use App\Console\Commands\CouponStartDispose;
 use App\Console\Commands\AutomaticReceiving;
 use App\Console\Commands\OrderInvalidationHandling;
 use App\Console\Commands\VipCouponGrant;
+use App\Console\Commands\VipDueProcessing;
+use App\Console\Commands\VipExpirationReminder;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -26,6 +28,8 @@ class Kernel extends ConsoleKernel
         AutomaticReceiving::class,
         AutomaticDelivery::class,
         VipCouponGrant::class,
+        VipDueProcessing::class,
+        VipExpirationReminder::class,
     ];
 
     /**
@@ -63,6 +67,10 @@ class Kernel extends ConsoleKernel
         }
         //订单失效处理
         $schedule->command('order:invalidation')->everyMinute();
+        //vip到期处理
+        $schedule->command('vip:expire')->everyMinute();
+        //vip到期提醒
+        $schedule->command('vip:reminder')->everyMinute();
         //vip优惠券每月下发一次
         $schedule->command('vipCoupon:grant')->monthlyOn(1, '01:00');
     }

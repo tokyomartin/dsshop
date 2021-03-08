@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\v1\Coupon;
 use App\Models\v1\User;
 use App\Models\v1\UserCoupon;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 
 class VipCouponGrant extends Command
@@ -49,6 +50,7 @@ class VipCouponGrant extends Command
                         $UserCoupon->user_id = $u->id;
                         $UserCoupon->coupon_id = $c->id;
                         $UserCoupon->ticket = orderNumber();
+                        $UserCoupon->failure_time = Carbon::now()->toDateTimeString();
                         $UserCoupon->save();
                     }
                 }

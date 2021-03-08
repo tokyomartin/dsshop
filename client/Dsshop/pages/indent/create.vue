@@ -276,7 +276,7 @@
 							id: item.id,
 							title: item.coupon.name,
 							explain: item.coupon.explain,
-							endTime: item.coupon.endtime.split(' ')[0].replace(/-/g,".")
+							endTime: item.failure_time ? item.failure_time.split(' ')[0].replace(/-/g,".") : item.coupon.endtime.split(' ')[0].replace(/-/g,".")
 						}
 						
 						switch(item.coupon.type){
