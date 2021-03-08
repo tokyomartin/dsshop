@@ -40,7 +40,7 @@ class VipCouponGrant extends Command
      */
     public function handle()
     {
-        $User = User::where('vip', User::USER_VIP_YES)->where('state', User::USER_STATE_NORMAL)->where('unsubscribe', User::USER_UNSUBSCRIBE_NO)->get();
+        $User = User::where('vip', User::USER_VIP_YES)->where('state', User::USER_STATE_NORMAL)->where('unsubscribe', User::USER_UNSUBSCRIBE_NO)->where('vip_time','>=',date("Y-m-d 00:00:00"))->where('vip_time','<=',date("Y-m-d 59:59:59"))->get();
         $Coupon = Coupon::where('vip', Coupon::COUPON_VIP_YES)->get();
         foreach ($User as $u) {
             foreach ($Coupon as $c) {

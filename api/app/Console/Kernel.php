@@ -72,7 +72,7 @@ class Kernel extends ConsoleKernel
         //vip到期提醒
         $schedule->command('vip:reminder')->everyMinute();
         //vip优惠券每月下发一次
-        $schedule->command('vipCoupon:grant')->monthlyOn(1, '01:00');
+        $schedule->command('vipCoupon:grant')->dailyAt('01:00');
     }
 
     /**
