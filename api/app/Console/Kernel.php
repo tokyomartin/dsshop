@@ -7,6 +7,7 @@ use App\Console\Commands\CouponExpireDispose;
 use App\Console\Commands\CouponStartDispose;
 use App\Console\Commands\AutomaticReceiving;
 use App\Console\Commands\OrderInvalidationHandling;
+use App\Console\Commands\VipCouponGrant;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -24,6 +25,7 @@ class Kernel extends ConsoleKernel
         OrderInvalidationHandling::class,
         AutomaticReceiving::class,
         AutomaticDelivery::class,
+        VipCouponGrant::class,
     ];
 
     /**
@@ -36,7 +38,7 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('coupon:expire')->dailyAt('00:00')->withoutOverlapping(10);
         $schedule->command('coupon:start')->dailyAt('00:00')->withoutOverlapping(10);
-        if(config('backup.switch')){    //是否开启备份功能
+        if (config('backup.switch')) {    //是否开启备份功能
             $schedule->command('backup:clean')->daily()->at(config('backup.clean_time'));
             if (config('backup.db_time') || config('backup.files_time')) {   //设置了数据库备份时间或文件备份时间
                 if (config('backup.db_time')) {
@@ -61,6 +63,8 @@ class Kernel extends ConsoleKernel
         }
         //订单失效处理
         $schedule->command('order:invalidation')->everyMinute();
+        //vip优惠券每月下发一次
+        $schedule->command('vipCoupon:grant')->monthlyOn(1, '01:00');
     }
 
     /**

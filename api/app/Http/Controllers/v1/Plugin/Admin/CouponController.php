@@ -60,6 +60,7 @@ class CouponController extends Controller
      * @queryParam  starttime string 开始时间
      * @queryParam  endtime string 结束时间
      * @queryParam  limit_get int 每人限领数量
+     * @queryParam  vip int 是否vip专属
      */
     public function create(SubmitCouponRequest $request)
     {
@@ -71,17 +72,19 @@ class CouponController extends Controller
         $Coupon->residue = $Coupon->amount ?? 0;
         $Coupon->sill = $request->sill;
         $Coupon->limit_get = $request->limit_get ?? 0;
-
-        if (count($request->time) == 2) {
-            $Coupon->starttime = $request->time[0];
-            $Coupon->endtime = $request->time[1];
-            if ($Coupon->starttime == date('Y-m-d')) {
-                $Coupon->state = Coupon::COUPON_STATE_SHOW;
+        $Coupon->vip = $request->vip;
+        if ($Coupon->vip == Coupon::COUPON_VIP_NO) {
+            if (count($request->time) == 2) {
+                $Coupon->starttime = $request->time[0];
+                $Coupon->endtime = $request->time[1];
+                if ($Coupon->starttime == date('Y-m-d')) {
+                    $Coupon->state = Coupon::COUPON_STATE_SHOW;
+                } else {
+                    $Coupon->state = Coupon::COUPON_STATE_NO;
+                }
             } else {
-                $Coupon->state = Coupon::COUPON_STATE_NO;
+                return resReturn(0, '请选择领取时间', Code::CODE_WRONG);
             }
-        } else {
-            return resReturn(0, '请选择领取时间', Code::CODE_WRONG);
         }
         $Coupon->save();
         return resReturn(1, '添加成功');

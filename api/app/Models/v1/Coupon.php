@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string endtime
  * @property int limit_get
  * @property int state
+ * @property int vip
  */
 class Coupon extends Model
 {
@@ -28,6 +29,8 @@ class Coupon extends Model
     const COUPON_STATE_NO= 0; //状态：未发放
     const COUPON_STATE_SHOW= 1; //状态：发放中
     const COUPON_STATE_HIDE= 2; //状态：已结束
+    const COUPON_VIP_YES= 1; //VIP专属：是
+    const COUPON_VIP_NO= 0; //VIP专属：否
     protected $appends = ['explain'];
     /**
      * Prepare a date for array / JSON serialization.
