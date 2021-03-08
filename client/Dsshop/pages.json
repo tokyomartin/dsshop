@@ -276,7 +276,7 @@
 		// 优惠券_e
 		// 评价_s
 		,{
-			"path": "pages/order/score",
+			"path": "pages/indent/score",
 			"style": {
 				"navigationBarTitleText": "评价",
 				"app-plus": {
