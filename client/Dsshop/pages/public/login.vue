@@ -139,7 +139,7 @@
 				logining: true
 			}
 		},
-		onLoad(){
+		onLoad(options){
 			// #ifndef  MP
 			this.TabCur = 1
 			// #endif
