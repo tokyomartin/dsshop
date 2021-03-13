@@ -47,7 +47,7 @@ Dsshop是一个商城解决方案，它采用前后端分离，后端基于larav
 
 要求
 ------------
- - php >= 7.2.5
+ - php >= 7.4
  - laravel = 7.22.4
  - mysql >= 5.7
  - vue = 2.5.17
@@ -194,7 +194,6 @@ npm install
 ------------
 - 有问题可以直接discussions，请详细说明问题，如果你不习惯用discussions，也可以通过issue。
 - dsshop交流群，微信扫码进群
-- 现开通“技术交流”（面向技术，方便碰到问题解决问题和一些技术相关的沟通）和“运营交流”（面向站长/运营/UI，该群的成立主要是站在使用者的角度去优化项目，如后台报表、操作流程等）二大群
 <p align="center">
   <img src="https://dspurl.github.io/image/12.png" width="150">
 </p>
