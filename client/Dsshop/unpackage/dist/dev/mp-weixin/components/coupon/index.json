@@ -1,0 +1,6 @@
+{
+  "usingComponents": {
+    "coolc-coupon": "/components/coupon/coolc-coupon"
+  },
+  "component": true
+}

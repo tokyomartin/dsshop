@@ -1,0 +1,27 @@
+@charset "UTF-8";
+/* 页面左右间距 */
+/* 文字尺寸 */
+/*文字颜色*/
+/* 边框颜色 */
+/* 图片加载中颜色 */
+/* 行为相关颜色 */
+/* 文章场景相关 */
+page {
+  background-color: #FFFFFF;
+  padding-bottom: 30rpx;
+}
+.subject {
+  padding: 40rpx;
+}
+.subject .title {
+  font-size: 52rpx;
+  text-align: left;
+  line-height: 1.4;
+  font-weight: 400;
+}
+.subject .details {
+  line-height: 60rpx;
+  letter-spacing: 2px;
+  width: 100%;
+}
+
