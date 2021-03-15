@@ -3,6 +3,7 @@
   "usingComponents": {
     "share": "/components/share",
     "sku": "/components/sku/index",
-    "u-parse": "/components/gaoyia-parse/parse"
+    "u-parse": "/components/gaoyia-parse/parse",
+    "coupon": "/components/coupon/index"
   }
 }

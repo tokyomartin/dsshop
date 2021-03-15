@@ -16,10 +16,10 @@
     "pages/user/user",
     "pages/user/collect",
     "pages/detail/detail",
-    "pages/order/order",
+    "pages/indent/list",
     "pages/money/money",
-    "pages/order/createOrder",
-    "pages/order/showOrder",
+    "pages/indent/create",
+    "pages/indent/detail",
     "pages/address/address",
     "pages/address/addressManage",
     "pages/finance/bill",
@@ -33,9 +33,10 @@
     "pages/article/index",
     "pages/article/details",
     "pages/coupon/index",
-    "pages/order/score",
+    "pages/indent/score",
     "pages/product/comment",
-    "pages/user/share"
+    "pages/user/share",
+    "pages/vip/index"
   ],
   "subPackages": [],
   "window": {

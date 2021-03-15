@@ -28,7 +28,15 @@
     "pages/money/paySuccess",
     "pages/notice/notice",
     "pages/category/category",
-    "pages/product/list"
+    "pages/product/list",
+    "pages/article/column",
+    "pages/article/index",
+    "pages/article/details",
+    "pages/coupon/index",
+    "pages/indent/score",
+    "pages/product/comment",
+    "pages/user/share",
+    "pages/vip/index"
   ],
   "subPackages": [],
   "window": {
@@ -74,6 +82,5 @@
       "desc": "你的位置信息将用于位置接口的效果展示"
     }
   },
-  "usingComponents": {},
-  "sitemapLocation": "sitemap.json"
+  "usingComponents": {}
 }
