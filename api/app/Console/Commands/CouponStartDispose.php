@@ -38,6 +38,6 @@ class CouponStartDispose extends Command
      */
     public function handle()
     {
-        Coupon::where('starttime',date('Y-m-d'))->where('state',Coupon::COUPON_STATE_NO)->update(['state' => Coupon::COUPON_STATE_SHOW]);
+        Coupon::where('starttime',date('Y-m-d'))->where('state',Coupon::COUPON_STATE_NO)->where('vip', Coupon::COUPON_VIP_NO)->update(['state' => Coupon::COUPON_STATE_SHOW]);
     }
 }

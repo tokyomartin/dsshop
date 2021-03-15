@@ -9,6 +9,10 @@
       <el-form-item label="货号" prop="number" style="width:400px;">
         <el-input v-model="ruleForm.number" maxlength="50" clearable/>
       </el-form-item>
+      <el-form-item label="会员折扣" prop="discount" style="width:400px;">
+        <el-input v-model="ruleForm.discount" maxlength="50" clearable/>
+        <div class="el-upload__tip">配置后，会员享受折扣按该设置处理，未配置按全局处理</div>
+      </el-form-item>
       <el-form-item label="运费模板" prop="freight_id">
         <el-select v-model="ruleForm.freight_id" clearable placeholder="请选择">
           <el-option
@@ -164,7 +168,7 @@
         </el-radio-group>
       </el-form-item>
       <el-form-item class="float-button">
-        <el-button :loading="formLoading" type="primary" @click="dialogStatus==='create'?createSubmit():updateSubmit()">提交</el-button>
+        <el-button :loading="formLoading" type="primary" @click="dialogStatus==='create'?create():edit()">提交</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -337,7 +341,8 @@ export default {
         is_hot: 0,
         is_inventory: 0,
         sort: 5,
-        freight_id: ''
+        freight_id: '',
+        discount: ''
       },
       imgProgress: false,
       dialogStatus: 'create',
@@ -348,6 +353,9 @@ export default {
         ],
         number: [
           { required: true, message: '请输入货号', trigger: 'blur' }
+        ],
+        discount: [
+          { required: false, validator: validatePrice, message: '折扣只能是数字', trigger: 'blur' }
         ],
         freight_id: [
           { required: true, message: '请选择运费模板', trigger: 'change' }
@@ -409,7 +417,7 @@ export default {
         this.loading = false
       })
     },
-    createSubmit() { // 添加
+    create() { // 添加
       this.formLoading = true
       this.$refs['ruleForm'].validate((valid) => {
         if (valid) {
@@ -431,7 +439,7 @@ export default {
         }
       })
     },
-    updateSubmit() { // 更新
+    edit() { // 更新
       this.formLoading = true
       this.$refs['ruleForm'].validate((valid) => {
         if (valid) {

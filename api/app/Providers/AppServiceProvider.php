@@ -1,6 +1,7 @@
 <?php
 namespace App\Providers;
 use App\Models\v1\GoodIndent;
+use App\Models\v1\PaymentLog;
 use App\Models\v1\User;
 use App\Observers\GoodIndent\CreateIndentCommodityObserver;
 use App\Observers\GoodIndent\CreateIndentLocationObserver;
@@ -8,9 +9,13 @@ use App\Observers\GoodIndent\EscrowRefundObserver;
 use App\Observers\GoodIndent\FinishPaymentMoneyLogObserver;
 use App\Observers\GoodIndent\FinishPaymentNotificationObserver;
 use App\Observers\GoodIndent\IndentCancelStockProcessingObserver;
+use App\Observers\GoodIndent\IndentFailureStockProcessingObserver;
 use App\Observers\GoodIndent\ReceiptNotificationObserver;
 use App\Observers\GoodIndent\RefundNotificationObserver;
 use App\Observers\GoodIndent\ShipmentNotificationObserver;
+use App\Observers\PaymentLog\GoodIndentPaymentCreateObserver;
+use App\Observers\PaymentLog\GoodIndentPaymentSucceedObserver;
+use App\Observers\PaymentLog\GoodIndentRefundObserver;
 use App\Observers\User\UserLogObserver;
 use App\Observers\User\UserRegisterNotificationObserver;
 use Illuminate\Support\ServiceProvider;
@@ -40,11 +45,15 @@ class AppServiceProvider extends ServiceProvider
         GoodIndent::observe(FinishPaymentNotificationObserver::class);
         GoodIndent::observe(FinishPaymentMoneyLogObserver::class);
         GoodIndent::observe(IndentCancelStockProcessingObserver::class);
+        GoodIndent::observe(IndentFailureStockProcessingObserver::class);
         GoodIndent::observe(CreateIndentCommodityObserver::class);
         GoodIndent::observe(CreateIndentLocationObserver::class);
         GoodIndent::observe(ShipmentNotificationObserver::class);
         GoodIndent::observe(RefundNotificationObserver::class);
         GoodIndent::observe(EscrowRefundObserver::class);
+        PaymentLog::observe(GoodIndentPaymentCreateObserver::class);
+        PaymentLog::observe(GoodIndentPaymentSucceedObserver::class);
+        PaymentLog::observe(GoodIndentRefundObserver::class);
         // 插件
         // 优惠券_s
         \App\Models\v1\GoodIndent::observe(\App\Observers\GoodIndent\UserUseCouponObserver::class);
@@ -53,9 +62,15 @@ class AppServiceProvider extends ServiceProvider
         // 评价_s
         \App\Models\v1\GoodIndent::observe(\App\Observers\GoodIndent\OrderRateNotificationObserver::class);
         \App\Models\v1\Comment::observe(\App\Observers\Comment\UserEvaluateNotificationObserver::class);
+        \App\Models\v1\Comment::observe(\App\Observers\GoodIndent\AutomaticEvaluateObserver::class);
         // 评价_e
         // 分销_s
         \App\Models\v1\User::observe(\App\Observers\User\RegistrationIncentivesObserver::class);
         // 分销_e
+        // 会员体系_s
+        \App\Models\v1\PaymentLog::observe(\App\Observers\PaymentLog\VipPaymentCreateObserver::class);
+        \App\Models\v1\PaymentLog::observe(\App\Observers\PaymentLog\VipPaymentSucceedObserver::class);
+        \App\Models\v1\GoodIndent::observe(\App\Observers\GoodIndent\CreateIndentVipFreightReductionObserver::class);
+        // 会员体系_e
     }
 }

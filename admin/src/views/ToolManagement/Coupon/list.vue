@@ -43,6 +43,11 @@
           <span>{{ scope.row.type }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="是否vip专属" sortable="custom" prop="type">
+        <template slot-scope="scope">
+          <span>{{ scope.row.vip ? '是' : '否' }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="优惠券价值" sortable="custom" prop="cost">
         <template slot-scope="scope">
           <span>{{ scope.row.cost }}</span>
@@ -80,10 +85,10 @@
       </el-table-column>
       <el-table-column label="操作" class-name="small-padding fixed-width" width="120" fixed="right">
         <template slot-scope="scope">
-          <el-tooltip v-permission="$store.jurisdiction.CouponEdit" v-if="scope.row.state === '发放中'" class="item" effect="dark" content="提前结束" placement="top-start">
+          <el-tooltip v-permission="$store.jurisdiction.CouponEdit" v-if="scope.row.state === '发放中' && scope.row.vip === 0" class="item" effect="dark" content="提前结束" placement="top-start">
             <el-button :loading="formLoading" type="warning" icon="el-icon-video-pause" circle @click="handleEnd(scope.row)"/>
           </el-tooltip>
-          <el-tooltip v-permission="$store.jurisdiction.CouponEdit" v-if="scope.row.state === '未发放'" class="item" effect="dark" content="提前开始" placement="top-start">
+          <el-tooltip v-permission="$store.jurisdiction.CouponEdit" v-if="scope.row.state === '未发放' && scope.row.vip === 0" class="item" effect="dark" content="提前开始" placement="top-start">
             <el-button :loading="formLoading" type="success" icon="el-icon-video-play" circle @click="handleStart(scope.row)"/>
           </el-tooltip>
           <el-tooltip v-permission="$store.jurisdiction.CouponDestroy" class="item" effect="dark" content="删除" placement="top-start">
@@ -108,6 +113,16 @@
           <el-select v-model="temp.type" placeholder="请选择类型" clearable style="width:160px;">
             <el-option v-for="item in type" :key="item.value" :label="item.name" :value="item.value"/>
           </el-select>
+        </el-form-item>
+        <el-form-item label="是否vip专属" prop="vip">
+          <el-radio-group v-model="temp.vip">
+            <el-radio :label="0">否</el-radio>
+            <el-radio :label="1">是</el-radio>
+          </el-radio-group>
+          <el-alert
+            style="margin-top:10px;"
+            title="设为vip专属后，'每人限领'和'领取时间'自动失效，优惠券数量即每月发给vip的数量"
+            type="warning"/>
         </el-form-item>
         <el-form-item label="优惠券价值" prop="cost">
           <el-input v-model="temp.cost" maxlength="11" clearable>
@@ -145,7 +160,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">{{ $t('usuel.cancel') }}</el-button>
-        <el-button :loading="formLoading" type="primary" @click="dialogStatus==='create'?createSubmit():updateSubmit()">确定</el-button>
+        <el-button :loading="formLoading" type="primary" @click="dialogStatus==='create'?create():edit()">确定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -255,13 +270,13 @@ export default {
       temp: {},
       rules: {
         name: [
-          { required: true, message: '请输入轮播名称', trigger: 'blur' }
+          { required: true, message: '请输入优惠券名称', trigger: 'blur' }
         ],
         type: [
           { required: true, message: '请选择类型', trigger: 'change' }
         ],
-        state: [
-          { required: true, message: '请选择状态', trigger: 'change' }
+        vip: [
+          { required: true, message: '请选择是否vip专属', trigger: 'change' }
         ],
         sort: [
           { required: true, message: '请填写排序', trigger: 'blur' }
@@ -306,7 +321,8 @@ export default {
         residue: '',
         sill: '',
         time: '',
-        limit_get: ''
+        limit_get: '',
+        vip: 0
       }
     },
     handleCreate() {
@@ -341,7 +357,7 @@ export default {
         })
       })
     },
-    createSubmit() { // 添加
+    create() { // 添加
       this.formLoading = true
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {

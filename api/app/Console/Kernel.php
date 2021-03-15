@@ -5,6 +5,11 @@ namespace App\Console;
 use App\Console\Commands\AutomaticDelivery;
 use App\Console\Commands\CouponExpireDispose;
 use App\Console\Commands\CouponStartDispose;
+use App\Console\Commands\AutomaticReceiving;
+use App\Console\Commands\OrderInvalidationHandling;
+use App\Console\Commands\VipCouponGrant;
+use App\Console\Commands\VipDueProcessing;
+use App\Console\Commands\VipExpirationReminder;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -18,7 +23,13 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         CouponStartDispose::class,
         CouponExpireDispose::class,
-        AutomaticDelivery::class
+        AutomaticDelivery::class,
+        OrderInvalidationHandling::class,
+        AutomaticReceiving::class,
+        AutomaticDelivery::class,
+        VipCouponGrant::class,
+        VipDueProcessing::class,
+        VipExpirationReminder::class,
     ];
 
     /**
@@ -31,7 +42,7 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('coupon:expire')->dailyAt('00:00')->withoutOverlapping(10);
         $schedule->command('coupon:start')->dailyAt('00:00')->withoutOverlapping(10);
-        if(config('backup.switch')){    //是否开启备份功能
+        if (config('backup.switch')) {    //是否开启备份功能
             $schedule->command('backup:clean')->daily()->at(config('backup.clean_time'));
             if (config('backup.db_time') || config('backup.files_time')) {   //设置了数据库备份时间或文件备份时间
                 if (config('backup.db_time')) {
@@ -48,6 +59,20 @@ class Kernel extends ConsoleKernel
         //以下任务调试可直接删除
         //自动发货
         $schedule->command('automatic:delivery')->everyMinute();
+        if (config('dswjcms.automaticReceivingState')) {    //是否开启自动收货
+            $schedule->command('automatic:receiving')->dailyAt('00:20');
+        }
+        if (config('comment.automaticEvaluateState')) {    //是否开启自动好评
+            $schedule->command('automatic:evaluate')->everyMinute();
+        }
+        //订单失效处理
+        $schedule->command('order:invalidation')->everyMinute();
+        //vip到期处理
+        $schedule->command('vip:expire')->everyMinute();
+        //vip到期提醒
+        $schedule->command('vip:reminder')->everyMinute();
+        //vip优惠券每月下发一次
+        $schedule->command('vipCoupon:grant')->dailyAt('01:00');
     }
 
     /**

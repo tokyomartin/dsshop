@@ -39,7 +39,7 @@ class CouponExpireDispose extends Command
      */
     public function handle()
     {
-        $Coupon=Coupon::where('endtime',date('Y-m-d'))->where('state',Coupon::COUPON_STATE_SHOW)->get();
+        $Coupon=Coupon::where('endtime',date('Y-m-d'))->where('state',Coupon::COUPON_STATE_SHOW)->where('vip', Coupon::COUPON_VIP_NO)->get();
         foreach ($Coupon as $c){
             UserCoupon::where('coupon_id',$c->id)->where('state',UserCoupon::USER_COUPON_STATE_UNUSED)->update(['state' => UserCoupon::USER_COUPON_STATE_XSE]);
         }

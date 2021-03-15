@@ -29,7 +29,7 @@ class CouponController extends Controller
     {
         $q = Coupon::query();
         $limit = $request->limit;
-        $q->where('state', Coupon::COUPON_STATE_SHOW)->where('residue', '>', 0);
+        $q->where('state', Coupon::COUPON_STATE_SHOW)->where('vip', Coupon::COUPON_VIP_NO)->where('residue', '>', 0);
         $q->where(function ($q1) use ($request) {    //不包括随机优惠券
             $q1->orWhere('type', Coupon::COUPON_TYPE_FULL_REDUCTION)
                 ->orWhere('type', Coupon::COUPON_TYPE_DISCOUNT);
@@ -118,11 +118,12 @@ class CouponController extends Controller
                 return resReturn(0, '您已领取过优惠券，无法再次领取', Code::CODE_WRONG);
             }
         }
-        $return = DB::transaction(function () use ($request) {
+        $return = DB::transaction(function () use ($request, $Coupon) {
             $UserCoupon = new UserCoupon();
             $UserCoupon->user_id = auth('web')->user()->id;
             $UserCoupon->coupon_id = $request->id;
             $UserCoupon->ticket = orderNumber();
+            $UserCoupon->failure_time = $Coupon->endtime;
             $UserCoupon->save();
             Coupon::where('id', $request->id)->decrement('residue');
             return 1;
