@@ -75,7 +75,7 @@
 				<input class="desc" type="text" v-model="data.remark" placeholder="请填写备注信息" placeholder-class="placeholder" maxlength="200"/>
 			</view>
 		</view>
-		
+
 		<!-- 底部 -->
 		<view class="footer">
 			<view class="price-content">
@@ -173,11 +173,6 @@
 				let cartList =  uni.getStorageSync('dsshopOrderList') || {}
 				const that = this
 				for(var k in cartList){
-					this.order.push({
-						id: cartList[k].good_id,
-						number: cartList[k].number,
-						freight_id: cartList[k].good.freight_id
-					})
 					cartList[k].checked = true
 					cartList[k].loaded = 'loaded'
 					if(cartList[k].good_sku){
@@ -187,7 +182,7 @@
 							}else{
 								cartList[k].specification = item.v + ';'
 							}
-							
+
 						})
 						cartList[k].specification = cartList[k].specification.substr(0,cartList[k].specification.length-1)
 					}
@@ -199,13 +194,13 @@
 				that.data.indentCommodity = cartList
 				that.calcTotal()  //计算总价
 				that.getOne()
-				
-				
+
+
 			},
 			//获取默认收货地址
 			getOne(){
 				const that = this
-				Shipping.defaultGet(this.order, function(res){
+				Shipping.freight(0,this.goodList, function(res){
 					that.addressData = res.shipping ? res.shipping : ''
 					that.carriage = res.carriage ? res.carriage : 0
 					that.outPocketTotal() //实付金额
@@ -234,7 +229,7 @@
 						url: '/pages/money/pay?id='+res
 					})
 				})
-				
+
 			},
 			addAddress(){
 				uni.navigateTo({
@@ -243,6 +238,11 @@
 			},
 			//地址选择回调
 			refreshAddress(item){
+				const that = this
+				Shipping.freight(item.id,this.goodList, function(res){
+					that.carriage = res.carriage ? res.carriage : 0
+					that.outPocketTotal() //实付金额
+				})
 				this.addressData = item
 			},
 			//计算总价
@@ -561,7 +561,7 @@
 			color: $font-color-dark;
 		}
 	}
-	
+
 	/* 支付列表 */
 	.pay-list{
 		padding-left: 40upx;
@@ -572,7 +572,7 @@
 			align-items: center;
 			padding-right: 20upx;
 			line-height: 1;
-			height: 110upx;	
+			height: 110upx;
 			position: relative;
 		}
 		.icon-weixinzhifu{
@@ -600,7 +600,7 @@
 			flex: 1;
 		}
 	}
-	
+
 	.footer{
 		position: fixed;
 		left: 0;

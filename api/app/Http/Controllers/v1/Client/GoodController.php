@@ -37,16 +37,9 @@ class GoodController extends Controller
             $q->where('is_recommend', $request->is_recommend);
         }
         $q->where('is_show', Good::GOOD_SHOW_PUTAWAY);
-        //全文搜索
         if ($request->title) {
             $q->where(function ($q1) use ($request) {
-                /* MySQL<5.7 请使用这种方式, 如果商品数量多, 请自己分词解决搜索效率问题
-                $q1->orWhere('name','like','%'.$request->title.'%')
-                    ->orWhere('number',$request->title)
-                    ->orWhere('keywords','like','%'.$request->title.'%');
-                */
-                $q1->orWhereRaw('MATCH (name,keywords,number) AGAINST (\'' . $request->title . '\' IN NATURAL LANGUAGE MODE)')
-                    ->orWhere('number', $request->title);
+                $q1->orWhere('name', 'like', '%' . $request->title . '%');
             });
         }
         //排序
@@ -114,6 +107,7 @@ class GoodController extends Controller
      * 商品分类
      * @param Request $request
      * @return \Illuminate\Http\Response
+     * @queryParam  tree boolean 返回格式是否为树状结构
      * @queryParam  is_recommend int 是否首页展示
      * @queryParam  limit int 每页显示条数
      * @queryParam  sort string 排序
@@ -136,6 +130,9 @@ class GoodController extends Controller
             $q->orderBy('sort', 'ASC');
         }
         $paginate = $q->with(['resources'])->get();
+        if ($request->has('tree')) {
+            $paginate = genTree($paginate->toArray(), 'pid');
+        }
         return resReturn(1, $paginate);
     }
 }

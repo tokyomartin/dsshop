@@ -31,7 +31,6 @@
 			<view class="forget-section" @click="toFind">
 				忘记密码?
 			</view>
-		  </view>
 			<view class="register-section">
 				还没有账号?
 				<text @click="toRegist">马上注册</text>
@@ -69,10 +68,10 @@
 <script>
 	import Login from '../../api/login'
 	import { getPlatform,getLogin } from '../../utils'
-	import {  
-        mapMutations  
+	import {
+        mapMutations
     } from 'vuex';
-	
+
 	export default{
 		data(){
 			return {
@@ -254,7 +253,7 @@
 				  }else{
 					  that.$api.msg(`您选择了拒绝授权，无法完成登录`)
 				  }
-				  
+
 			  }
 		}
 
@@ -365,7 +364,7 @@
 			font-size: $font-base + 2upx;
 			color: $font-color-dark;
 			width: 100%;
-		}	
+		}
 	}
 
 	.confirm-btn{
