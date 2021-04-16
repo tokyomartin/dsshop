@@ -9,17 +9,17 @@
             <!-- 二级分类-->
             <div class="secondary-navigation" v-if="categoryStyle === 1">
               <div class="list" v-for="(item, index) in categorySublevel" :key="index">
-                <NuxtLink class="dt" to="{ path: 'product/detail', query: { id: item.id }}">{{item.name}}<i class="iconfont dsshop-youjiantou"></i></NuxtLink>
+                <NuxtLink class="dt">{{item.name}}<i class="iconfont dsshop-youjiantou"></i></NuxtLink>
                 <div class="dd">
-                  <NuxtLink class="li" v-for="(item2, index2) in item.children" :key="index2" to="/pass/login">{{item2.name}}</NuxtLink>
+                  <NuxtLink class="li" v-for="(item2, index2) in item.children" :key="index2" :to="{ path: 'product/list', query: { pid: item2.id, title: item2.name }}">{{item2.name}}</NuxtLink>
                 </div>
               </div>
             </div>
             <div class="secondary-navigation2" v-else-if="categoryStyle === 2">
-              <NuxtLink class="li" to="/pass/login" v-for="(item, index) in categorySublevel" :key="index">
+              <NuxtLink class="li" :to="{ path: 'product/list', query: { pid: item.id, title: item.name }}" v-for="(item, index) in categorySublevel" :key="index">
                 <el-image
                   class="image"
-                  :src="item.resources.img"
+                  :src="item.resources.img | smallImage(80)"
                   fit="scale-down"/>
                 <div class="name">{{item.name}}</div>
               </NuxtLink>
@@ -195,7 +195,7 @@ export default {
     box-shadow: 0 8px 16px #888888;
     top:0;
     left: 200px;
-    z-index: 2;
+    z-index: 10;
     width: 1000px;
     height: 460px;
     padding:20px;
@@ -205,7 +205,6 @@ export default {
     .li{
       font-size: 12px;
       line-height: 40px;
-      margin-bottom: 40px;
       display: flex;
       width: 25%;
       .name{
@@ -215,14 +214,15 @@ export default {
         overflow: hidden;
         text-overflow:ellipsis;
         white-space: nowrap;
+        line-height: 80px;
       }
     }
     .li:hover{
       color: #fa524c;
     }
     .image{
-      width: 40px;
-      height: 40px;
+      width: 80px;
+      height: 80px;
     }
   }
   .secondary-navigation{
