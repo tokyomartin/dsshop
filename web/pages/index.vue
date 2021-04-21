@@ -26,22 +26,23 @@
             </div>
             <!-- 二级导航 end-->
           </div>
-          <el-carousel class="banner" height="460px">
+          <el-carousel class="banner" height="460px" arrow="never">
             <el-carousel-item v-for="(item, index) in bannerList" :key="index">
-              <el-image class="image" :src="item.resources.img"/>
+              <NuxtLink v-if="item.url" target="_blank" :to="item.url.split('pages/').join('')">
+                <el-image class="image" :src="item.resources.img"/>
+              </NuxtLink>
+              <el-image v-else class="image" :src="item.resources.img"/>
             </el-carousel-item>
           </el-carousel>
         </div>
       </div>
     </div>
     <!--分类 end-->
-    <!--广告-->
-    <!--广告 end-->
     <!--推荐-->
     <div class="recommend container">
       <div class="title">为你推荐</div>
       <div class="list">
-        <NuxtLink class="li" v-for="(item, index) in goodList" :key="index" :to="{ path: '/product/detail', query: { id: item.id }}">
+        <NuxtLink target="_blank" class="li" v-for="(item, index) in goodList" :key="index" :to="{ path: '/product/detail', query: { id: item.id }}">
           <el-card class="card" shadow="hover">
             <el-image
               class="image"
@@ -58,6 +59,42 @@
       </div>
     </div>
     <!--推荐 end-->
+    <!-- 广告-->
+    <div class="container advertising" v-if="banner">
+      <NuxtLink v-if="banner.url" target="_blank" :to="banner.url.split('pages/').join('')">
+        <el-image
+          fit="cover"
+          :src="banner.resources.img"/>
+      </NuxtLink>
+      <el-image
+        v-else
+        fit="cover"
+        :src="banner.resources.img"/>
+    </div>
+    <!--分类推荐-->
+    <div class="recommend container" v-for="(fitem, findex) in recommendCategoryList" :key="findex">
+      <div class="title-box">
+        <div class="min-title">{{fitem.name}}</div>
+        <NuxtLink target="_blank" class="more" :to="{ path: '/product/list', query: { pid: fitem.id, title: fitem.name }}">查看更多>></NuxtLink>
+      </div>
+      <div class="list">
+        <NuxtLink target="_blank" class="li" v-for="(item, index) in recommendGoodList[findex]" :key="index" :to="{ path: '/product/detail', query: { id: item.id }}">
+          <el-card class="card" shadow="hover">
+            <el-image
+              class="image"
+              :src="item.resources.img | smallImage(200)"
+              fit="cover"
+              lazy/>
+            <div class="name">{{item.name}}</div>
+            <div class="price">
+              <div class="symbol">¥</div>
+              <div class="value">{{item.order_price | thousands}}</div>
+            </div>
+          </el-card>
+        </NuxtLink>
+      </div>
+    </div>
+    <!--分类推荐 end-->
   </div>
 </template>
 
@@ -70,16 +107,19 @@ export default {
       categoryStyle: 0,
       naveOn: null,
       goodList: [],
+      banner: '',
       bannerList: [],
       categoryList: [],
-      categorySublevel:[]
+      categorySublevel:[],
+      recommendCategoryList: [],
+      recommendGoodList: [],
     }
   },
   async asyncData (ctx) {
     try {
-      let [goodData, bannerData, categoryData] = await Promise.all([
+      let [goodData, bannerData, categoryData, recommendCategoryData] = await Promise.all([
         getGoodList({
-          limit: 20,
+          limit: 10,
           is_recommend: 1
         }),
         bannerList({
@@ -90,18 +130,23 @@ export default {
         goodCategory({
           tree: true
         }),
+        goodCategory({
+          is_recommend: 1
+        }),
       ])
       return {
         goodList: goodData.data,
         bannerList: bannerData.data,
-        categoryList: categoryData
+        categoryList: categoryData,
+        recommendCategoryList: recommendCategoryData
       }
     } catch(err) {
       ctx.$errorHandler(err)
     }
   },
   mounted() {
-
+    this.categoryGood();
+    this.getBanner()
   },
   methods: {
     // 分类切换
@@ -121,21 +166,65 @@ export default {
         }
       }
     },
+    // 获取分类商品
+    categoryGood() {
+      this.recommendCategoryList.forEach((item,index)=>{
+        this.recommendGoodList[index] = []
+        getGoodList({
+          limit: 10,
+          category_id: item.id
+        }).then(response => {
+          this.recommendGoodList[index] = response.data
+          this.$forceUpdate()
+        })
+      })
+    },
     // 分类移出
     naveShiftOut(){
       this.naveOn = null;
       this.categoryStyle = 0
+    },
+    // 首页广告
+    getBanner(){
+      bannerList({
+        limit: 1,
+        type: 1,
+        sort: '+sort'
+      }).then(response => {
+        this.banner = response.data[0]
+      })
     }
   }
 }
 </script>
 
 <style lang='scss' scoped>
+  .advertising{
+    margin-top: 20px;
+  }
   .recommend{
     margin-top:40px;
     width: 1210px;
     position: relative;
     left: 5px;
+    .title-box{
+      display: flex;
+      .min-title{
+        font-size: 22px;
+        color: #333;
+        line-height: 58px;
+        flex:1;
+      }
+      .more{
+        font-size: 16px;
+        line-height: 58px;
+        color: #424242;
+        width: 95px;
+      }
+      .more:hover{
+        color: $font-color-main;
+      }
+    }
     .title{
       text-align: center;
       display: block;
@@ -168,10 +257,10 @@ export default {
             .symbol{
               font-size: 12px;
               line-height: 40px;
-              color: #fa524c;
+              color: $font-color-main;
             }
             .value{
-              color: #fa524c;
+              color: $font-color-main;
               line-height: 35px;
             }
           }
@@ -218,7 +307,7 @@ export default {
       }
     }
     .li:hover{
-      color: #fa524c;
+      color: $font-color-main;
     }
     .image{
       width: 80px;
@@ -251,7 +340,7 @@ export default {
         }
       }
       .dt:hover{
-        color: #fa524c;
+        color: $font-color-main;
       }
       .dd{
         display: flex;
@@ -260,7 +349,7 @@ export default {
           padding: 0 10px 0 10px;
         }
         .li:hover{
-          color: #fa524c;
+          color: $font-color-main;
         }
       }
     }
@@ -268,13 +357,17 @@ export default {
   .classify{
     display: flex;
     background-color: #ffffff;
+    position: relative;
     .nave{
+      z-index: 10;
+      position: absolute;
+      left: 0;
+      top:0;
       width: 200px;
-      background-color: #ffffff;
-      color: #000000;
+      color: #ffffff;
       padding-top:20px;
       height: 460px;
-      overflow: hidden;
+      background: rgba(105,101,101,.6);
       .nave-li{
         cursor:pointer;
         padding:10px;
@@ -286,7 +379,7 @@ export default {
       }
       .nave-li:hover,.nave-li.on{
         color: #ffffff;
-        background-color: #fa524c;
+        background-color: $font-color-main;
       }
     }
     .banner{
