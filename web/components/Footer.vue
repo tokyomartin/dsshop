@@ -19,6 +19,33 @@
         <div>正品保证</div>
       </div>
     </div>
+    <!-- 服务end-->
+    <el-divider class="container"></el-divider>
+    <!-- 链接-->
+    <div class="links container">
+      <div class="li">
+        <div class="dt">购物指南</div>
+        <NuxtLink class="dd" :to="{ path: '/article/list', query: { id: 7 }}">销售时间</NuxtLink>
+        <NuxtLink class="dd" :to="{ path: '/article/list', query: { id: 8 }}">发货时效</NuxtLink>
+        <NuxtLink class="dd" :to="{ path: '/article/list', query: { id: 9 }}">包邮政策</NuxtLink>
+      </div>
+      <div class="li">
+        <div class="dt">支付方式</div>
+        <NuxtLink class="dd" to="/pass/login">在线支付</NuxtLink>
+      </div>
+      <div class="li">
+        <div class="dt">账户管理</div>
+        <NuxtLink class="dd" to="/pass/login">账户注册</NuxtLink>
+        <NuxtLink class="dd" to="/pass/login">忘记密码</NuxtLink>
+      </div>
+      <div class="li">
+        <div class="dt">关注我们</div>
+        <NuxtLink class="dd" :to="{ path: '/article/list', query: { id: 17 }}">关于我们</NuxtLink>
+        <NuxtLink class="dd" :to="{ path: '/article/list', query: { id: 18 }}">加入我们</NuxtLink>
+        <NuxtLink class="dd" to="/pass/login">联系我们</NuxtLink>
+      </div>
+    </div>
+    <!-- 链接end-->
     <!-- 版权信息-->
     <div class="copyright">
       <div class="container">
@@ -54,6 +81,7 @@
       display: flex;
       flex-wrap: wrap;
       align-content: flex-start;
+      padding-bottom: 50px;
       .li{
         width: 25%;
         text-align: center;
@@ -64,6 +92,7 @@
         .dd{
           line-height: 35px;
           font-size: 12px;
+          display: block;
         }
       }
     }
