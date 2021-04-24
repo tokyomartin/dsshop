@@ -28,7 +28,7 @@
       </el-form>
       <div class="go-login">已有账号？马上去<NuxtLink to="/pass/login">登录</NuxtLink></div>
       <div class="user-agreement">
-        已阅读并同意：DSSHOP <NuxtLink to="/pass/register">用户协议</NuxtLink>和 <NuxtLink to="/pass/register">隐私政策</NuxtLink>
+        已阅读并同意：DSSHOP <NuxtLink :to="{ path: '/article/detail', query: { id: 2 }}" target="_blank">用户协议</NuxtLink>和 <NuxtLink :to="{ path: '/article/detail', query: { id: 1 }}" target="_blank">隐私政策</NuxtLink>
       </div>
     </el-card>
   </div>
