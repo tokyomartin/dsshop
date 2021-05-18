@@ -125,6 +125,11 @@ class GoodIndentController extends Controller
         $redis = new RedisService();
         $return = $request->all();
         if (count($return) > 0) {
+            foreach ($return as $id => $r) {
+                if (!$r) {
+                    unset($return[$id]);
+                }
+            }
             $redis->set('shoppingCart' . auth('web')->user()->id, json_encode($return));
         } else {
             if ($redis->get('shoppingCart' . auth('web')->user()->id)) {   //如果传过来空数组，则代表需要移除购物车列表
@@ -133,7 +138,17 @@ class GoodIndentController extends Controller
         }
         return resReturn(1, '成功');
     }
-
+    /**
+     * 清空购物车
+     * @param Request $request
+     * @return string
+     */
+    public function clearShoppingCart(Request $request)
+    {
+        $redis = new RedisService();
+        $redis->del('shoppingCart' . auth('web')->user()->id );
+        return resReturn(1, '成功');
+    }
     /**
      * SynchronizationInventory
      * 同步线上商品库存
