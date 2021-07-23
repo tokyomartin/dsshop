@@ -1,29 +1,29 @@
 version: '3.7'
 volumes:
   dsshop_redis_data:
-#  dsshop_mysql_data:
+  dsshop_mysql_data:
 networks:
   dsshop-network:
     driver: bridge
 services:
 
 # Prod 把mysql 模块去掉
-#  mysql:
-#    container_name: dsshop-mysql
-#    restart: on-failure
-#    volumes:
-#      - dsshop_mysql_data:/var/lib/mysql
-#    image: mysql:5.7
-#    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
-#    environment:
-#      - MYSQL_ROOT_PASSWORD=123
-#      - MYSQL_DATABASE=dsshop
-#    ports:
-#      - "3306:3306"
-#    networks:
-#      dsshop-network:
-#        aliases:
-#          - mysql.dsshop
+  mysql:
+    container_name: dsshop-mysql
+    restart: on-failure
+    volumes:
+      - dsshop_mysql_data:/var/lib/mysql
+    image: mysql:5.7
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    environment:
+      - MYSQL_ROOT_PASSWORD=123
+      - MYSQL_DATABASE=dsshop
+    ports:
+      - "3306:3306"
+    networks:
+      dsshop-network:
+        aliases:
+          - mysql.dsshop
 
 
   redis:
@@ -45,7 +45,7 @@ services:
     depends_on:
       - redis
  # Prod 把mysql去掉
- #     - mysql
+      - mysql
     build:
       context: ./docker/php-fpm/
     volumes:
