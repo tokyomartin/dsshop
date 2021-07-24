@@ -24,6 +24,9 @@ RUN apt update \
     && docker-php-ext-install pdo \
     && docker-php-ext-install pdo_mysql
 RUN cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini
+# www 目录权限
+RUN chown -R www-data:www-data /var/www
+
 RUN php -r "copy('https://install.phpcomposer.com/installer', 'composer-setup.php');"
 RUN php composer-setup.php
 RUN mv composer.phar /usr/local/bin/composer
